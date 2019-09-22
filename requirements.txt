@@ -1,0 +1,6 @@
+numpy
+pandas
+torch
+spacy
+tqdm
+pytorch==0.4.1
