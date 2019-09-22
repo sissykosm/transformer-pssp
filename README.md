@@ -1,3 +1,12 @@
+# Transformer Model on PSSP problem
+
+Uses attention is all you need model on CB6133, CB513 datasets, protein secondary structure sequences
+
+Steps for training:
+- Run `python3 data.py` (download dataset)
+- Run `python3 preprocess.py` (preprocess)
+- Run `python3 train.py` (train model with default parameters)
+
 # Attention is all you need: A Pytorch Implementation
 
 This is a PyTorch implementation of the Transformer model in "[Attention is All You Need](https://arxiv.org/abs/1706.03762)" (Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin, arxiv, 2017). 
