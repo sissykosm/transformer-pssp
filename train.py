@@ -346,14 +346,14 @@ def prepare_dataloaders(data, opt):
 # ========= Preparing DataLoader =========#
     train_loader = torch.utils.data.DataLoader(
         initDataset,
-        num_workers=2,
+        num_workers=4,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn,
         sampler=train_sampler)
 
     valid_loader = torch.utils.data.DataLoader(
         initDataset,
-        num_workers=2,
+        num_workers=4,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn,
         sampler=valid_sampler)
@@ -366,7 +366,7 @@ def prepare_dataloaders(data, opt):
             tgt_insts=data['valid']['tgt'],
             sp_insts=data['valid']['sp']
         ),
-        num_workers=2,
+        num_workers=4,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn)
 
