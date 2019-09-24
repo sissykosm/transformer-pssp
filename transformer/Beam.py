@@ -9,6 +9,7 @@ import torch
 import numpy as np
 import transformer.Constants as Constants
 
+
 class Beam():
     ''' Beam search '''
 
@@ -25,7 +26,8 @@ class Beam():
         self.prev_ks = []
 
         # The outputs at each time-step.
-        self.next_ys = [torch.full((size,), Constants.PAD, dtype=torch.long, device=device)]
+        self.next_ys = [torch.full(
+            (size,), Constants.PAD, dtype=torch.long, device=device)]
         self.next_ys[0][0] = Constants.BOS
 
     def get_current_state(self):
@@ -52,8 +54,10 @@ class Beam():
 
         flat_beam_lk = beam_lk.view(-1)
 
-        best_scores, best_scores_id = flat_beam_lk.topk(self.size, 0, True, True) # 1st sort
-        best_scores, best_scores_id = flat_beam_lk.topk(self.size, 0, True, True) # 2nd sort
+        best_scores, best_scores_id = flat_beam_lk.topk(
+            self.size, 0, True, True)  # 1st sort
+        best_scores, best_scores_id = flat_beam_lk.topk(
+            self.size, 0, True, True)  # 2nd sort
 
         self.all_scores.append(self.scores)
         self.scores = best_scores
