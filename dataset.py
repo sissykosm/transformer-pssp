@@ -7,14 +7,9 @@ from transformer import Constants
 
 def paired_collate_fn(insts):
     src_insts, tgt_insts, sp_insts = list(zip(*insts))
-    # print(src_insts)
-    # print(np.array(sp_insts[0]).shape)
 
     src_insts = collate_fn_x(src_insts, sp_insts)
-    # src_insts = collate_fn(src_insts)
     tgt_insts = collate_fn(tgt_insts)
-    # sp_insts = collate_fn_ones(sp_insts)
-    # print(sp_insts[0].shape)
 
     return (*src_insts, *tgt_insts)
 
@@ -23,7 +18,6 @@ def collate_fn_x(insts, sp_insts):
     ''' Pad the instance to the max seq length in batch '''
 
     max_len = max(len(inst) for inst in insts)
-    # print(max_len)
 
     batch_seq = np.array([
         inst + [Constants.PAD] * (max_len - len(inst))
