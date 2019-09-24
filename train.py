@@ -32,12 +32,11 @@ def plot(train_loss, val_loss):
     plt.ylabel('Loss')
     return plt
 
-
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
 
     loss = cal_loss(pred, gold, smoothing)
-
+    
     pred = pred.max(1)[1]
     gold = gold.contiguous().view(-1)
     non_pad_mask = gold.ne(Constants.PAD)
