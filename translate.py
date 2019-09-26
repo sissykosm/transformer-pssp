@@ -17,9 +17,9 @@ def main():
 
     parser.add_argument('-model', required=True,
                         help='Path to model .pt file')
-    parser.add_argument('-src', required=True,
+    parser.add_argument('-src', required=False,
                         help='Source sequence to decode (one line per sequence)')
-    parser.add_argument('-sp', required=True,
+    parser.add_argument('-sp', required=False,
                         help='Source sequence profiles to decode (one line per sequence)')
     parser.add_argument('-vocab', required=True,
                         help='Source sequence to decode (one line per sequence)')
@@ -41,6 +41,7 @@ def main():
     # Prepare DataLoader
     preprocess_data = torch.load(opt.vocab)
     preprocess_settings = preprocess_data['settings']
+    '''
     test_src_word_insts = read_instances_from_file(
         opt.src,
         preprocess_settings.max_word_seq_len,
@@ -51,6 +52,7 @@ def main():
         preprocess_settings.keep_case)
     test_src_insts = convert_instance_to_idx_seq(
         test_src_word_insts, preprocess_data['dict']['src'])
+    '''
 
     test_loader = torch.utils.data.DataLoader(
         TranslationDataset(
