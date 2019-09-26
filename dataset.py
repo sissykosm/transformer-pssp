@@ -48,14 +48,20 @@ def collate_fn(insts):
         inst + [Constants.PAD] * (max_len - len(inst))
         for inst in insts])
 
+    batch_sp = np.array([[
+        inst.tolist() + [Constants.PAD] * (max_len - len(inst))
+        for inst in sp]
+        for sp in sp_insts])
+
     batch_pos = np.array([
         [pos_i+1 if w_i != Constants.PAD else 0
          for pos_i, w_i in enumerate(inst)] for inst in batch_seq])
 
     batch_seq = torch.LongTensor(batch_seq)
+    batch_sp = torch.FloatTensor(batch_sp)
     batch_pos = torch.LongTensor(batch_pos)
 
-    return batch_seq, batch_pos
+    return batch_seq, batch_sp, batch_pos
 
 
 class TranslationDataset(torch.utils.data.Dataset):
