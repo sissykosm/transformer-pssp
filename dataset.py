@@ -41,10 +41,10 @@ def collate_fn_x(insts, sp_insts):
 def collate_fn_test(insts):
     src_insts, sp_insts = list(zip(*insts))
     
-    max_len = max(len(inst) for inst in insts)
+    max_len = max(len(inst) for inst in src_insts)
     batch_seq = np.array([
         inst + [Constants.PAD] * (max_len - len(inst))
-        for inst in insts])
+        for inst in src_insts])
 
     batch_sp = np.array([[
         inst.tolist() + [Constants.PAD] * (max_len - len(inst))
