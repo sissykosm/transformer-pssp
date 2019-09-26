@@ -5,8 +5,6 @@ import numpy as np
 import transformer.Constants as Constants
 from transformer.Layers import EncoderLayer, DecoderLayer
 
-__author__ = "Yu-Hsiang Huang"
-
 
 def get_non_pad_mask(seq):
     assert seq.dim() == 2
@@ -23,7 +21,7 @@ def get_sinusoid_encoding_table(n_position, d_hid, padding_idx=None):
         return [cal_angle(position, hid_j) for hid_j in range(d_hid)]
 
     sinusoid_table = np.array([get_posi_angle_vec(pos_i)
-                              for pos_i in range(n_position)])
+                               for pos_i in range(n_position)])
 
     sinusoid_table[:, 0::2] = np.sin(sinusoid_table[:, 0::2])  # dim 2i
     sinusoid_table[:, 1::2] = np.cos(sinusoid_table[:, 1::2])  # dim 2i+1
@@ -94,7 +92,8 @@ class Encoder(nn.Module):
         non_pad_mask = get_non_pad_mask(src_seq)
 
         # -- Forward
-        enc_output = self.src_word_emb(src_seq) + self.linear(src_sp) + self.position_enc(src_pos)
+        enc_output = self.src_word_emb(
+            src_seq) + self.linear(src_sp) + self.position_enc(src_pos)
 
         for enc_layer in self.layer_stack:
             enc_output, enc_slf_attn = enc_layer(
@@ -107,6 +106,7 @@ class Encoder(nn.Module):
         if return_attns:
             return enc_output, enc_slf_attn_list
         return enc_output,
+
 
 class Decoder(nn.Module):
     ''' A decoder model with self attention mechanism. '''
@@ -139,7 +139,8 @@ class Decoder(nn.Module):
         non_pad_mask = get_non_pad_mask(tgt_seq)
 
         slf_attn_mask_subseq = get_subsequent_mask(tgt_seq)
-        slf_attn_mask_keypad = get_attn_key_pad_mask(seq_k=tgt_seq, seq_q=tgt_seq)
+        slf_attn_mask_keypad = get_attn_key_pad_mask(
+            seq_k=tgt_seq, seq_q=tgt_seq)
         slf_attn_mask = (slf_attn_mask_keypad + slf_attn_mask_subseq).gt(0)
 
         dec_enc_attn_mask = get_attn_key_pad_mask(seq_k=src_seq, seq_q=tgt_seq)
@@ -161,6 +162,7 @@ class Decoder(nn.Module):
         if return_attns:
             return dec_output, dec_slf_attn_list, dec_enc_attn_list
         return dec_output,
+
 
 class Transformer(nn.Module):
     ''' A sequence to sequence model with attention mechanism. '''
@@ -191,7 +193,7 @@ class Transformer(nn.Module):
         nn.init.xavier_normal_(self.tgt_word_prj.weight)
 
         assert d_model == d_word_vec, \
-        'To facilitate the residual connections, \
+            'To facilitate the residual connections, \
          the dimensions of all module outputs shall be the same.'
 
         if tgt_emb_prj_weight_sharing:
@@ -204,7 +206,7 @@ class Transformer(nn.Module):
         if emb_src_tgt_weight_sharing:
             # Share the weight matrix between source & target word embeddings
             assert n_src_vocab == n_tgt_vocab, \
-            "To share word embedding table, the vocabulary size of src/tgt shall be the same."
+                "To share word embedding table, the vocabulary size of src/tgt shall be the same."
             self.encoder.src_word_emb.weight = self.decoder.tgt_word_emb.weight
 
     def forward(self, src_seq, src_sp, src_pos, tgt_seq, tgt_pos):

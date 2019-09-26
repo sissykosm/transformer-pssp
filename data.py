@@ -10,13 +10,20 @@ TEST_PATH = './pssp-data/cb513+profile_split1.npy.gz'
 TRAIN_URL = "http://www.princeton.edu/~jzthree/datasets/ICML2014/cullpdb+profile_6133_filtered.npy.gz"
 TEST_URL = "http://www.princeton.edu/~jzthree/datasets/ICML2014/cb513+profile_split1.npy.gz"
 
-AA_PATH = lambda key : f'./pssp-data/aa_{key}.txt'
-SP_PATH = lambda key : f'./pssp-data/sp_{key}.pkl'
-PSS_PATH = lambda key : f'./pssp-data/pss_{key}.txt'
+
+def AA_PATH(key): return f'./pssp-data/aa_{key}.txt'
+
+
+def SP_PATH(key): return f'./pssp-data/sp_{key}.pkl'
+
+
+def PSS_PATH(key): return f'./pssp-data/pss_{key}.txt'
+
 
 TRAIN_PATH = 'data/cullpdb+profile_6133_filtered.npy.gz'
 TEST_PATH = 'data/cb513+profile_split1.npy.gz'
 ##### TRAIN DATA #####
+
 
 def download_dataset():
     print('[Info] Downloading CB513 dataset ...')
@@ -24,6 +31,7 @@ def download_dataset():
         os.makedirs('./pssp-data', exist_ok=True)
         os.system(f'wget -O {TRAIN_PATH} {TRAIN_URL}')
         os.system(f'wget -O {TEST_PATH} {TEST_URL}')
+
 
 def make_datasets():
     print('[Info] Making datasets ...')
@@ -115,6 +123,7 @@ def get_seq_profile(X_profile, seq_len):
         seq_profile.append(sp[:, :l])
     return seq_profile
 
+
 def main():
     if not os.path.exists('./data'):
         os.makedirs('./data')
@@ -122,6 +131,7 @@ def main():
     if not os.path.exists('./pssp-data'):
         os.makedirs('./pssp-data', exist_ok=True)
     make_datasets()
+
 
 if __name__ == '__main__':
     main()

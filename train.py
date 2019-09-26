@@ -22,11 +22,12 @@ import matplotlib.pyplot as plt
 
 from torch.utils.data.sampler import SubsetRandomSampler
 
-def plot(train_loss, val_loss): 
-    epoch_count=range(1,len(train_loss)+1)
-    plt.plot(epoch_count,train_loss,'r-')
-    plt.plot(epoch_count,val_loss,'b-')
-    plt.legend(['Training Loss','Validation Loss'])
+
+def plot(train_loss, val_loss):
+    epoch_count = range(1, len(train_loss)+1)
+    plt.plot(epoch_count, train_loss, 'r-')
+    plt.plot(epoch_count, val_loss, 'b-')
+    plt.legend(['Training Loss', 'Validation Loss'])
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     return plt
@@ -35,7 +36,7 @@ def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
 
     loss = cal_loss(pred, gold, smoothing)
-
+    
     pred = pred.max(1)[1]
     gold = gold.contiguous().view(-1)
     non_pad_mask = gold.ne(Constants.PAD)
@@ -156,9 +157,9 @@ def test(model, test_data, device, opt):
     start = time.time()
     valid_loss, valid_accu = eval_epoch(model, test_data, device)
     print('  - (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
-        'elapsed: {elapse:3.3f} min'.format(
-        ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu,
-        elapse=(time.time()-start)/60))
+          'elapsed: {elapse:3.3f} min'.format(
+              ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu,
+              elapse=(time.time()-start)/60))
 
 
 def train(model, training_data, validation_data, optimizer, device, opt):
@@ -230,7 +231,6 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         val_loss_all.append(valid_loss)
 
     return train_loss_all, val_loss_all
-    
 
 
 def main():
@@ -306,7 +306,8 @@ def main():
             betas=(0.9, 0.98), eps=1e-09),
         opt.d_model, opt.n_warmup_steps)
 
-    train_loss, val_loss = train(transformer, training_data, validation_data, optimizer, device, opt)
+    train_loss, val_loss = train(
+        transformer, training_data, validation_data, optimizer, device, opt)
     print("Starting Test...")
     test(transformer, test_data, device, opt)
     print("Making loss graph...")
@@ -345,14 +346,14 @@ def prepare_dataloaders(data, opt):
 # ========= Preparing DataLoader =========#
     train_loader = torch.utils.data.DataLoader(
         initDataset,
-        num_workers=2,
+        num_workers=4,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn,
         sampler=train_sampler)
 
     valid_loader = torch.utils.data.DataLoader(
         initDataset,
-        num_workers=2,
+        num_workers=4,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn,
         sampler=valid_sampler)
@@ -365,7 +366,7 @@ def prepare_dataloaders(data, opt):
             tgt_insts=data['valid']['tgt'],
             sp_insts=data['valid']['sp']
         ),
-        num_workers=2,
+        num_workers=4,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn)
 
