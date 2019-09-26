@@ -39,7 +39,7 @@ def collate_fn_x(insts, sp_insts):
     return batch_seq, batch_sp, batch_pos
 
 
-def collate_fn(insts):
+def collate_fn(insts, sp_insts):
     ''' Pad the instance to the max seq length in batch '''
 
     max_len = max(len(inst) for inst in insts)
