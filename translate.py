@@ -18,6 +18,8 @@ def main():
                         help='Path to model .pt file')
     parser.add_argument('-src', required=True,
                         help='Source sequence to decode (one line per sequence)')
+    parser.add_argument('-sp', required=True,
+                        help='Source sequence profiles to decode (one line per sequence)')
     parser.add_argument('-vocab', required=True,
                         help='Source sequence to decode (one line per sequence)')
     parser.add_argument('-output', default='pred.txt',
@@ -42,6 +44,10 @@ def main():
         opt.src,
         preprocess_settings.max_word_seq_len,
         preprocess_settings.keep_case)
+    sp_instances = test_src_word_insts = read_instances_from_file(
+        opt.sp,
+        preprocess_settings.max_word_seq_len,
+        preprocess_settings.keep_case)
     test_src_insts = convert_instance_to_idx_seq(
         test_src_word_insts, preprocess_data['dict']['src'])
 
@@ -49,7 +55,8 @@ def main():
         TranslationDataset(
             src_word2idx=preprocess_data['dict']['src'],
             tgt_word2idx=preprocess_data['dict']['tgt'],
-            src_insts=test_src_insts),
+            src_insts=test_src_insts,
+            sp_insts=sp_instances),
         num_workers=2,
         batch_size=opt.batch_size,
         collate_fn=collate_fn)
