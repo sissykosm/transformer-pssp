@@ -56,8 +56,8 @@ def main():
         TranslationDataset(
             src_word2idx=preprocess_data['dict']['src'],
             tgt_word2idx=preprocess_data['dict']['tgt'],
-            src_insts=test_src_insts,
-            sp_insts=sp_instances),
+            src_insts=preprocess_data['valid']['src'],
+            sp_insts=preprocess_data['valid']['sp']),
         num_workers=2,
         batch_size=opt.batch_size,
         collate_fn=collate_fn)
