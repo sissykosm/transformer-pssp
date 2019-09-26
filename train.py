@@ -34,7 +34,7 @@ def plot(train_loss, val_loss):
 
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
-
+    print(pred)
     loss = cal_loss(pred, gold, smoothing)
     
     pred = pred.max(1)[1]
