@@ -25,6 +25,8 @@ try:
             acc = get_acc(res, text)
             print(i, acc)
             acc_list.append(acc)
+        else: 
+            print("error")
         
         line = fp.readline()
         res = fp2.readline()
