@@ -75,8 +75,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
     model.train()
 
     total_loss = 0
-    n_word_total = 0
-    n_word_correct = 0
+    n_word_batch_mean = 0
     n_batch = 0
 
     acc_list = []
@@ -108,13 +107,11 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
         n_batch += 1
 
         n_word = non_pad_mask.sum().item()
-        n_word_total += n_word
-        n_word_correct += n_correct
-        # acc_list.append(get_acc(src_seq, pred))
+        n_word_batch_mean += n_correct/n_word
 
     # loss_per_word = total_loss/n_word_total
     mean_loss = total_loss/n_batch
-    accuracy = n_word_correct/n_word_total
+    accuracy = n_word_batch_mean/n_batch
 
     return mean_loss, accuracy
 
