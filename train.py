@@ -54,7 +54,7 @@ def cal_performance(pred, gold, smoothing=False):
 
     gold = gold.ne(Constants.PAD)
     accuracy2 = get_acc(pred.tolist(), gold.tolist())
-
+    print(loss)
     return loss, n_correct, accuracy2
 
 
@@ -62,7 +62,7 @@ def cal_loss(pred, gold, smoothing):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
 
     gold = gold.contiguous().view(-1)
-    return FocalLoss(gamma=0)(pred, gold)
+    return FocalLoss(gamma=2)(pred, gold)
 
     if smoothing:
         eps = 0.1
