@@ -67,8 +67,8 @@ def build_vocab_idx(word_insts, min_word_count):
 
 
 def convert_instance_to_idx_seq(word_insts, word2idx):
-    ''' Mapping words to idx sequence. '''
-    return [[word2idx.get(w, Constants.UNK) for w in s] for s in word_insts]
+    test = [[word2idx.get(w, Constants.UNK) for w in s] for s in word_insts]
+    return test
 
 
 def load_picke_data(path):
