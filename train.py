@@ -75,8 +75,8 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
     model.train()
 
     total_loss = 0
-    n_word_total = 0
-    n_word_correct = 0
+    n_word_batch_mean = 0
+    n_batch = 0
 
     acc_list = []
     for batch in tqdm(
@@ -103,18 +103,17 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
         # note keeping
         total_loss += loss.item()
 
+        
+        n_batch += 1
         non_pad_mask = gold.ne(Constants.PAD)
         n_word = non_pad_mask.sum().item()
-        n_word_total += n_word
-        n_word_correct += n_correct
-        # acc_list.append(get_acc(src_seq, pred))
+        n_word_batch_mean += n_correct/n_word
 
-    loss_per_word = total_loss/n_word_total
-    accuracy = n_word_correct/n_word_total
-    # accuracy1 = np.mean(acc_list)
-    # print(accuracy1)
-    # print(accuracy)
-    return loss_per_word, accuracy
+    # loss_per_word = total_loss/n_word_total
+    mean_loss = total_loss/n_batch
+    accuracy = n_word_batch_mean/n_batch
+
+    return mean_loss, accuracy
 
 
 def eval_epoch(model, validation_data, device):
@@ -123,8 +122,8 @@ def eval_epoch(model, validation_data, device):
     model.eval()
 
     total_loss = 0
-    n_word_total = 0
-    n_word_correct = 0
+    n_word_batch_mean = 0
+    n_batch = 0
 
     with torch.no_grad():
         for batch in tqdm(
@@ -143,14 +142,14 @@ def eval_epoch(model, validation_data, device):
             # note keeping
             total_loss += loss.item()
 
+            n_batch += 1
             non_pad_mask = gold.ne(Constants.PAD)
             n_word = non_pad_mask.sum().item()
-            n_word_total += n_word
-            n_word_correct += n_correct
+            n_word_batch_mean += n_correct/n_word
 
-    loss_per_word = total_loss/n_word_total
-    accuracy = n_word_correct/n_word_total
-    return loss_per_word, accuracy
+    mean_loss = total_loss/n_batch
+    accuracy = n_word_batch_mean/n_batch
+    return mean_loss, accuracy
 
 
 def test(model, test_data, device, opt):
