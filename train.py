@@ -138,15 +138,19 @@ def eval_epoch(model, validation_data, device):
             pred = model(src_seq, src_sp, src_pos, tgt_seq, tgt_pos)
             loss, n_correct = cal_performance(pred, gold, smoothing=False)
 
+
+            n_batch += 1
             # note keeping
             total_loss += loss.item()
 
-            n_batch += 1
             non_pad_mask = gold.ne(Constants.PAD)
             n_word = non_pad_mask.sum().item()
+
             n_word_batch_mean += n_correct/n_word
+            print(n_batch)
 
     mean_loss = total_loss/n_batch
+    print(mean_loss)
     accuracy = n_word_batch_mean/n_batch
     return mean_loss, accuracy
 
@@ -186,16 +190,16 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         start = time.time()
         train_loss, train_accu = train_epoch(
             model, training_data, optimizer, device, smoothing=opt.label_smoothing)
-        print('  - (Training)   ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
+        print('  - (Training)   loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
               'elapsed: {elapse:3.3f} min'.format(
-                  ppl=math.exp(min(train_loss, 100)), accu=100*train_accu,
+                  ppl=train_loss, accu=100*train_accu,
                   elapse=(time.time()-start)/60))
 
         start = time.time()
         valid_loss, valid_accu = eval_epoch(model, validation_data, device)
-        print('  - (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
+        print('  - (Validation) loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
               'elapsed: {elapse:3.3f} min'.format(
-                  ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu,
+                  ppl=train_loss, accu=100*valid_accu,
                   elapse=(time.time()-start)/60))
 
         valid_accus += [valid_accu]
