@@ -53,6 +53,7 @@ def cal_performance(pred, gold, smoothing=False):
         return (1.0 * correct)/len(gt)
 
     gold = gold.ne(Constants.PAD)
+    print(list(pred), list(gold))
     accuracy2 = get_acc(list(pred), list(gold))
     print(accuracy2)
 
