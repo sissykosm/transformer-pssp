@@ -99,13 +99,11 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
         # update parameters
         optimizer.step_and_update_lr()
 
-        # note keeping
-        total_loss += loss.item()
-
         
         n_batch += 1
         non_pad_mask = gold.ne(Constants.PAD)
         n_word = non_pad_mask.sum().item()
+        total_loss += loss.item()/n_word
         n_word_batch_mean += n_correct/n_word
 
     # loss_per_word = total_loss/n_word_total
