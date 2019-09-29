@@ -169,10 +169,10 @@ def eval_epoch(model, validation_data, device):
 
 def test(model, test_data, device, opt):
     start = time.time()
-    valid_loss, valid_accu = eval_epoch(model, test_data, device)
-    print('  - (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
+    valid_loss, valid_accu, new_accu = eval_epoch(model, test_data, device)
+    print('  - (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, right_accuracy: {accu2:3.3f} % '
           'elapsed: {elapse:3.3f} min'.format(
-              ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu,
+              ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu, accu2=100*new_accu,
               elapse=(time.time()-start)/60))
 
 
@@ -202,14 +202,14 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         start = time.time()
         train_loss, train_accu, train_accuracy2 = train_epoch(
             model, training_data, optimizer, device, smoothing=opt.label_smoothing)
-        print('  - (Training)   loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f}'
+        print('  - (Training)   loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f} % '
               'elapsed: {elapse:3.3f} min'.format(
                   ppl=train_loss, accu=100*train_accu, accu2=100*train_accuracy2,
                   elapse=(time.time()-start)/60))
 
         start = time.time()
         valid_loss, valid_accu, val_accuracy2 = eval_epoch(model, validation_data, device)
-        print('  - (Validation) loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f} %'
+        print('  - (Validation) loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f} % '
               'elapsed: {elapse:3.3f} min'.format(
                   ppl=valid_loss, accu=100*valid_accu, accu2=100*val_accuracy2,
                   elapse=(time.time()-start)/60))
