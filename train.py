@@ -21,7 +21,7 @@ from transformer.Optim import ScheduledOptim
 import matplotlib.pyplot as plt
 
 from torch.utils.data.sampler import SubsetRandomSampler
-
+from utils import CrossEntropy
 
 def plot(train_loss, val_loss):
     epoch_count = range(1, len(train_loss)+1)
@@ -32,6 +32,16 @@ def plot(train_loss, val_loss):
     plt.ylabel('Loss')
     return plt
 
+# calculating accuracy 
+def get_acc(gt, pred):
+    assert len(gt) == len(pred)
+    correct = 0
+    for i in range(len(gt)):
+        if gt[i] == pred[i]:
+            correct += 1
+                
+    return (1.0 * correct)/len(gt)
+
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
     loss = cal_loss(pred, gold, smoothing)
@@ -41,16 +51,6 @@ def cal_performance(pred, gold, smoothing=False):
     non_pad_mask = gold.ne(Constants.PAD)
     n_correct = pred.eq(gold)
     n_correct = n_correct.masked_select(non_pad_mask).sum().item()
-
-    # calculating accuracy 
-    def get_acc(gt, pred):
-        assert len(gt) == len(pred)
-        correct = 0
-        for i in range(len(gt)):
-            if gt[i] == pred[i]:
-                correct += 1
-                
-        return (1.0 * correct)/len(gt)
 
     gold = gold.ne(Constants.PAD)
     accuracy2 = get_acc(pred.tolist(), gold.tolist())
@@ -90,6 +90,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
     n_word_batch_mean = 0
     n_batch = 0
 
+    loss_fun = CrossEntropy()
     accu = []
     for batch in tqdm(
             training_data, mininterval=2,
@@ -107,6 +108,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
 
         # backward
         loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=smoothing)
+        loss = loss_fun(pred, gold, len(pred))
         loss.backward()
 
         accu.append(accuracy2)
