@@ -141,12 +141,12 @@ def eval_epoch(model, validation_data, device):
 
             n_batch += 1
             # note keeping
-            total_loss += loss.item()
 
             non_pad_mask = gold.ne(Constants.PAD)
             n_word = non_pad_mask.sum().item()
-
+            total_loss += loss.item()/n_word
             n_word_batch_mean += n_correct/n_word
+            
 
     mean_loss = total_loss/n_batch
     accuracy = n_word_batch_mean/n_batch
