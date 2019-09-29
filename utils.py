@@ -130,14 +130,3 @@ def log_loss_std(y, t, eps=1e-15):
     """
     losses = log_losses(y, t, eps)
     return np.std(losses)
-
-class CrossEntropy(object):
-
-    def __init__(self):
-        pass
-
-    def __call__(self, out, target, seq_len):
-        loss = 0
-        for o, t, l in zip(out, target, seq_len):
-            loss += nn.CrossEntropyLoss()(o[:l], t[:l])
-        return loss

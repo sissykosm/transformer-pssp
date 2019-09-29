@@ -21,7 +21,6 @@ from transformer.Optim import ScheduledOptim
 import matplotlib.pyplot as plt
 
 from torch.utils.data.sampler import SubsetRandomSampler
-from utils import CrossEntropy
 
 def plot(train_loss, val_loss):
     epoch_count = range(1, len(train_loss)+1)
@@ -90,7 +89,6 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
     n_word_batch_mean = 0
     n_batch = 0
 
-    loss_fun = CrossEntropy()
     accu = []
     for batch in tqdm(
             training_data, mininterval=2,
@@ -108,7 +106,6 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
 
         # backward
         loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=smoothing)
-        loss = loss_fun(pred, gold, len(pred))
         loss.backward()
 
         accu.append(accuracy2)
@@ -216,7 +213,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
                   ppl=valid_loss, accu=100*valid_accu, accu2=100*val_accuracy2,
                   elapse=(time.time()-start)/60))
 
-        valid_accus += [valid_accu]
+        valid_accus += [val_accuracy2]
 
         model_state_dict = model.state_dict()
         checkpoint = {
@@ -231,7 +228,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
                 torch.save(checkpoint, model_name)
             elif opt.save_mode == 'best':
                 model_name = opt.save_model + '.chkpt'
-                if valid_accu >= max(valid_accus):
+                if val_accuracy2 >= max(valid_accus):
                     torch.save(checkpoint, model_name)
                     print('    - [Info] The checkpoint file has been updated.')
 
