@@ -17,6 +17,7 @@ import transformer.Constants as Constants
 from dataset import TranslationDataset, paired_collate_fn
 from transformer.Models import Transformer
 from transformer.Optim import ScheduledOptim
+from FocalLoss import FocalLoss
 
 import matplotlib.pyplot as plt
 
@@ -61,6 +62,7 @@ def cal_loss(pred, gold, smoothing):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
 
     gold = gold.contiguous().view(-1)
+    return FocalLoss(gamma=0)(x,l)
 
     if smoothing:
         eps = 0.1
