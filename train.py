@@ -77,7 +77,6 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
     n_word_batch_mean = 0
     n_batch = 0
 
-    acc_list = []
     for batch in tqdm(
             training_data, mininterval=2,
             desc='  - (Training)   ', leave=False):
@@ -195,7 +194,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         valid_loss, valid_accu = eval_epoch(model, validation_data, device)
         print('  - (Validation) loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
               'elapsed: {elapse:3.3f} min'.format(
-                  ppl=train_loss, accu=100*valid_accu,
+                  ppl=valid_loss, accu=100*valid_accu,
                   elapse=(time.time()-start)/60))
 
         valid_accus += [valid_accu]
