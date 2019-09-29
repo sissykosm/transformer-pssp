@@ -42,6 +42,20 @@ def cal_performance(pred, gold, smoothing=False):
     n_correct = pred.eq(gold)
     n_correct = n_correct.masked_select(non_pad_mask).sum().item()
 
+    # calculating accuracy 
+    def get_acc(gt, pred):
+        assert len(gt) == len(pred)
+        correct = 0
+        for i in range(len(gt)):
+            if gt[i] == pred[i]:
+                correct += 1
+                
+        return (1.0 * correct)/len(gt)
+
+    gold = gold.ne(Constants.PAD)
+    accuracy2 = get_acc(pred, gold)
+    print(accuracy2)
+
     return loss, n_correct
 
 
