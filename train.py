@@ -44,7 +44,6 @@ def get_acc(gt, pred):
 
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
-    loss = cal_loss(pred, gold, smoothing)
     
     pred = pred.max(1)[1]
     gold = gold.contiguous().view(-1)
@@ -54,6 +53,8 @@ def cal_performance(pred, gold, smoothing=False):
 
     gold = gold.ne(Constants.PAD)
     accuracy2 = get_acc(pred.tolist(), gold.tolist())
+
+    loss = cal_loss(pred, gold, smoothing)
     
     return loss, n_correct, accuracy2
 
