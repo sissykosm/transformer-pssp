@@ -45,21 +45,21 @@ def get_acc(gt, pred):
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
     loss = cal_loss(pred, gold, smoothing)
-    predsoft = F.softmax(pred, dim=1)
     pred = pred.max(1)[1]
+    print(pred)
     gold = gold.contiguous().view(-1)
 
     non_pad_mask = gold.ne(Constants.PAD)
     n_correct = pred.eq(gold)
     n_correct = n_correct.masked_select(non_pad_mask).sum().item()
 
-    test1 = predsoft.masked_select(predsoft.ne(Constants.PAD)).tolist()
+    test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
     test2 = gold.masked_select(non_pad_mask).tolist()
 
-    print(test1)
-    print(test2)
-    print(len(test1))
-    print(len(test2))
+    #print(test1)
+    #print(test2)
+    #print(len(test1))
+    #print(len(test2))
     accuracy2 = get_acc(test1, test2)
     
     return loss, n_correct, accuracy2
