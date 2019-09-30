@@ -53,8 +53,8 @@ def cal_performance(pred, gold, smoothing=False):
     n_correct = pred.eq(gold)
     n_correct = n_correct.masked_select(non_pad_mask).sum().item()
 
-    test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist())
-    test2 = gold.masked_select(non_pad_mask).tolist())
+    test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
+    test2 = gold.masked_select(non_pad_mask).tolist()
 
     print(test1)
     print(test2)
