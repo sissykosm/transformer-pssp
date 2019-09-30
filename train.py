@@ -46,7 +46,7 @@ def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
     loss = cal_loss(pred, gold, smoothing)
     pred = pred.max(1)[1]
-    print(pred)
+
     gold = gold.contiguous().view(-1)
 
     non_pad_mask = gold.ne(Constants.PAD)
@@ -58,8 +58,8 @@ def cal_performance(pred, gold, smoothing=False):
 
     print(test1)
     #print(test2)
-    #print(len(test1))
-    #print(len(test2))
+    print(len(test1))
+    print(len(test2))
     accuracy2 = get_acc(test1, test2)
     
     return loss, n_correct, accuracy2
