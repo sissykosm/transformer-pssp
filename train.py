@@ -56,6 +56,7 @@ def cal_performance(pred, gold, smoothing=False):
     test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
     test2 = gold.masked_select(non_pad_mask).tolist()
 
+    # TODO: Fixing here
     list_of_lists1 = []
     acc = []
     for i in test1:
