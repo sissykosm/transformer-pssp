@@ -75,15 +75,12 @@ def cal_performance(pred, gold, smoothing=False):
             # print(acc)
             list_of_lists2.append(acc)
             acc = []
-
-    print(len(list_of_lists1))
-    print(len(list_of_lists2))
     
     accuracies = []
     for test1, test2 in zip(list_of_lists1, list_of_lists2):
         if (len(test1) == len(test2)):
             accuracies.append(get_acc(test1, test2))
-            
+
     return loss, n_correct, np.mean(accuracies)
 
 
