@@ -79,7 +79,12 @@ def cal_performance(pred, gold, smoothing=False):
         if (len(test1) == len(test2)):
             accuracies.append(get_acc(test1, test2))
 
-    return loss, n_correct, np.mean(accuracies)
+    if len(accuracies) == 0:
+        mean = 0
+    else: 
+        mean = np.mean(accuracies)
+
+    return loss, n_correct, mean
 
 
 def cal_loss(pred, gold, smoothing):
