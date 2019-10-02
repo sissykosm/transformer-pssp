@@ -56,10 +56,13 @@ def cal_performance(pred, gold, smoothing=False):
     test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
     test2 = gold.masked_select(non_pad_mask).tolist()
 
+    len(test1)
+    len(test2)
     # TODO: Fixing here
     list_of_lists1 = []
     acc = []
     for i in test1:
+
         acc.append(i)
         if (i == Constants.EOS):
             # print(acc)
