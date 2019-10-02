@@ -63,7 +63,7 @@ def cal_performance(pred, gold, smoothing=False):
 
         acc.append(i)
         if (i == Constants.EOS):
-            # print(acc)
+            print(acc)
             list_of_lists1.append(acc)
             acc = []
 
