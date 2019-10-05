@@ -27,7 +27,9 @@ class FocalLoss(nn.Module):
         if self.alpha is not None:
             if self.alpha.type()!=input.data.type():
                 self.alpha = self.alpha.type_as(input.data)
-            at = self.alpha.gather(0,target.data.view(-1))
+
+            select = (target!=0).type(torch.LongTensor).cuda()
+            at = self.alpha.gather(0, select.data.view(-1))
             logpt = logpt * at
 
         loss = -1 * (1-pt)**self.gamma * logpt
