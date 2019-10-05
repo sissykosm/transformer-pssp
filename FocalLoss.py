@@ -4,45 +4,31 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 class FocalLoss(nn.Module):
-    def __init__(self, num_class, gamma=0.5, alpha=None):
-        '''
-        alpha: tensor of shape (C)
-        '''
-        super(FocalLoss, self).__init__()
+    def __init__(self, alpha=1.0, gamma=2, size_average=False):
+        super().__init__()
+        self.alpha = alpha
         self.gamma = gamma
-        self.num_class = num_class
-        if alpha==None:
-            self.alpha = torch.ones(num_class)
-        if isinstance(alpha, (list, np.ndarray)):
-            assert len(alpha) == num_class
-            alpha = torch.FloatTensor(alpha).view(num_class)
-            self.alpha = alpha / alpha.sum()
+        self.size_average = size_average
 
-    def forward(self, logit, target):
-        '''
-        args: logits: tensor before the softmax of shape (N,C) where C = number of classes 
-            or (N, C, H, W) in case of 2D Loss, 
-            or (N,C,d1,d2,...,dK) where K≥1 in the case of K-dimensional loss.
-        args: label: (N) where each value is in [0,C-1],
-            or (N, d1, d2, ..., dK)
-        Focal_Loss= -1*alpha*(1-pt)*log(pt)
-        '''
-        if self.alpha.device != logit.device:
-            self.alpha = self.alpha.to(logit.device)
-        if logit.dim() > 2:
-            logit = logit.view(logit.size(0), logit.size(1), -1)#(N,C,d=d1*d2*d3)
-            logit = logit.permute(0,2,1)#(N,d,C)
-            logit = logit.view(-1, self.num_class) #(N*d,C)
-        target = target.view(-1) #(N*H*W)
-        #alpha  = self.alpha.view(1, self.num_class) #(1,C)
-        alpha = self.alpha[target.cpu().long()] #(N*H*W)
-
-        logpt = - F.cross_entropy(logit, target, reduction='none')
-        pt    = torch.exp(logpt)
-        focal_loss = -(alpha * (1 - pt) ** self.gamma) * logpt
-
-        return focal_loss.sum()
+    def forward(self, inputs, targets):
+        targets = targets.view(-1, 1)
+        
+        prob_dist = F.softmax(inputs, dim=1)
+        pt = prob_dist.gather(1, targets)
+        
+        batch_loss = -self.alpha * (torch.pow((1 - pt), self.gamma)) * torch.log(pt)
+        
+        if self.size_average:
+            loss = batch_loss.mean()
+        else:
+            loss = batch_loss.sum()
+        return loss
 
 '''
 class FocalLoss(nn.Module):
