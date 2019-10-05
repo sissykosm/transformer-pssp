@@ -42,7 +42,7 @@ class FocalLoss(nn.Module):
         pt    = torch.exp(logpt)
         focal_loss = -(alpha * (1 - pt) ** self.gamma) * logpt
 
-        return focal_loss.mean()
+        return focal_loss.sum()
 
 '''
 class FocalLoss(nn.Module):
