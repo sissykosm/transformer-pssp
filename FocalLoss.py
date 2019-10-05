@@ -5,7 +5,7 @@ from torch.autograd import Variable
 import numpy as np
 
 class FocalLoss(nn.Module):
-    def __init__(self, num_class, gamma=2, alpha=None):
+    def __init__(self, num_class, gamma=0.5, alpha=None):
         '''
         alpha: tensor of shape (C)
         '''
