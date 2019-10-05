@@ -91,7 +91,7 @@ def cal_loss(pred, gold, smoothing):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
 
     gold = gold.contiguous().view(-1)
-    return FocalLoss(num_class=12, gamma=2, alpha=4)(pred, gold)
+    return FocalLoss(num_class=12, gamma=2)(pred, gold)
 
     if smoothing:
         eps = 0.1
