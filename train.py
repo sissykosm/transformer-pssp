@@ -223,7 +223,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
             log_tf.write('epoch,loss,ppl,accuracy\n')
             log_vf.write('epoch,loss,ppl,accuracy\n')
 
-    weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
+    weight_mask_tmp = [1, 1, 1, 1.5, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
     weight_mask = torch.tensor(weight_mask_tmp).to(device)
 
     crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
