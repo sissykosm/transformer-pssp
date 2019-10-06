@@ -42,9 +42,9 @@ def get_acc(gt, pred):
                 
     return (1.0 * correct)/len(gt)
 
-def cal_performance(pred, gold, smoothing=False, weight_mask = []):
+def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     ''' Apply label smoothing if needed '''
-    loss = cal_loss(pred, gold, smoothing, weight_mask)
+    loss = cal_loss(pred, gold, smoothing, crossEntropy)
     pred = pred.max(1)[1]
 
     gold = gold.contiguous().view(-1)
@@ -87,7 +87,7 @@ def cal_performance(pred, gold, smoothing=False, weight_mask = []):
     return loss, n_correct, mean
 
 
-def cal_loss(pred, gold, smoothing, weight_mask):
+def cal_loss(pred, gold, smoothing, weight_mask, crossEntropy):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
     gold = gold.contiguous().view(-1)
     # return FocalLoss()(pred, gold)
@@ -104,7 +104,6 @@ def cal_loss(pred, gold, smoothing, weight_mask):
         loss = -(one_hot * log_prb).sum(dim=1)
         loss = loss.masked_select(non_pad_mask).sum()  # average later
     else:
-        crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
         loss = crossEntropy(pred, gold)
         # loss = F.cross_entropy(
         #    pred, gold, ignore_index=Constants.PAD, reduction='sum')
@@ -112,7 +111,7 @@ def cal_loss(pred, gold, smoothing, weight_mask):
     return loss
 
 
-def train_epoch(model, training_data, optimizer, device, smoothing, weight_mask):
+def train_epoch(model, training_data, optimizer, device, smoothing, crossEntropy):
     ''' Epoch operation in training phase'''
     
     model.train()
@@ -137,7 +136,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing, weight_mask)
         pred = model(src_seq, src_sp, src_pos, tgt_seq, tgt_pos)
 
         # backward
-        loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=smoothing, weight_mask=weight_mask)
+        loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=smoothing, crossEntropy=crossEntropy)
         loss.backward()
 
         accu.append(accuracy2)
@@ -158,7 +157,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing, weight_mask)
     return mean_loss, accuracy, np.mean(accu)
 
 
-def eval_epoch(model, validation_data, device):
+def eval_epoch(model, validation_data, device, crossEntropy):
     ''' Epoch operation in evaluation phase '''
 
     model.eval()
@@ -180,7 +179,7 @@ def eval_epoch(model, validation_data, device):
 
             # forward
             pred = model(src_seq, src_sp, src_pos, tgt_seq, tgt_pos)
-            loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=False)
+            loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=False, crossEntropy=crossEntropy)
 
 
             n_batch += 1
@@ -227,6 +226,8 @@ def train(model, training_data, validation_data, optimizer, device, opt):
     weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
     weight_mask = torch.tensor(weight_mask_tmp).to(device)
 
+    crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
+
     train_loss_all = []
     val_loss_all = []
     valid_accus = []
@@ -235,14 +236,14 @@ def train(model, training_data, validation_data, optimizer, device, opt):
 
         start = time.time()
         train_loss, train_accu, train_accuracy2 = train_epoch(
-            model, training_data, optimizer, device, smoothing=opt.label_smoothing, weight_mask=weight_mask)
+            model, training_data, optimizer, device, smoothing=opt.label_smoothing, crossEntropy=crossEntropy)
         print('  - (Training)   loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f} % '
               'elapsed: {elapse:3.3f} min'.format(
                   ppl=train_loss, accu=100*train_accu, accu2=100*train_accuracy2,
                   elapse=(time.time()-start)/60))
 
         start = time.time()
-        valid_loss, valid_accu, val_accuracy2 = eval_epoch(model, validation_data, device)
+        valid_loss, valid_accu, val_accuracy2 = eval_epoch(model, validation_data, device, crossEntropy=crossEntropy)
         print('  - (Validation) loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f} % '
               'elapsed: {elapse:3.3f} min'.format(
                   ppl=valid_loss, accu=100*valid_accu, accu2=100*val_accuracy2,
