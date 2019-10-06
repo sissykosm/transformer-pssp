@@ -197,16 +197,16 @@ def eval_epoch(model, validation_data, device, crossEntropy):
     return mean_loss, accuracy, np.mean(accu)
 
 
-def test(model, test_data, device, opt):
+def test(model, test_data, device, opt, crossEntropy):
     start = time.time()
-    valid_loss, valid_accu, new_accu = eval_epoch(model, test_data, device)
+    valid_loss, valid_accu, new_accu = eval_epoch(model, test_data, device, crossEntropy)
     print('  - (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, right_accuracy: {accu2:3.3f} % '
           'elapsed: {elapse:3.3f} min'.format(
               ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu, accu2=100*new_accu,
               elapse=(time.time()-start)/60))
 
 
-def train(model, training_data, validation_data, optimizer, device, opt):
+def train(model, training_data, validation_data, optimizer, device, opt, crossEntropy):
     ''' Start training '''
 
     log_train_file = None
@@ -222,11 +222,6 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         with open(log_train_file, 'w') as log_tf, open(log_valid_file, 'w') as log_vf:
             log_tf.write('epoch,loss,ppl,accuracy\n')
             log_vf.write('epoch,loss,ppl,accuracy\n')
-
-    weight_mask_tmp = [1, 1, 1, 1.5, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
-    weight_mask = torch.tensor(weight_mask_tmp).to(device)
-
-    crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
 
     train_loss_all = []
     val_loss_all = []
@@ -355,10 +350,15 @@ def main():
             betas=(0.9, 0.98), eps=1e-09),
         opt.d_model, opt.n_warmup_steps)
 
+    weight_mask_tmp = [1, 1, 1, 1.5, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
+    weight_mask = torch.tensor(weight_mask_tmp).to(device)
+
+    crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
+
     train_loss, val_loss = train(
-        transformer, training_data, validation_data, optimizer, device, opt)
+        transformer, training_data, validation_data, optimizer, device, opt, crossEntropy)
     print("Starting Test...")
-    test(transformer, test_data, device, opt)
+    test(transformer, test_data, device, opt, crossEntropy)
     print("Making loss graph...")
     plt = plot(train_loss, val_loss)
     plt.savefig('loss.png')
