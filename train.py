@@ -93,7 +93,7 @@ def cal_loss(pred, gold, smoothing):
     weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
 
     gold = gold.contiguous().view(-1)
-    return FocalLoss()(pred, gold)
+    # return FocalLoss()(pred, gold)
 
     if smoothing:
         eps = 0.1
