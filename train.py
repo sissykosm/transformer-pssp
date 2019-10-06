@@ -90,6 +90,20 @@ def cal_performance(pred, gold, smoothing=False):
 def cal_loss(pred, gold, smoothing):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
 
+    weight_mask_tmp = []
+    weight_mask_tmp.append(1)
+    weight_mask_tmp.append(1)
+    weight_mask_tmp.append(1)
+    weight_mask_tmp.append(1)
+    weight_mask_tmp.append(0.1)
+    weight_mask_tmp.append(0.7)
+    weight_mask_tmp.append(2.6)
+    weight_mask_tmp.append(3.9)
+    weight_mask_tmp.append(0.11)
+    weight_mask_tmp.append(0.25)
+    weight_mask_tmp.append(0.45)
+    weight_mask_tmp.append(0.2)
+
     gold = gold.contiguous().view(-1)
     return FocalLoss()(pred, gold)
 
@@ -105,8 +119,10 @@ def cal_loss(pred, gold, smoothing):
         loss = -(one_hot * log_prb).sum(dim=1)
         loss = loss.masked_select(non_pad_mask).sum()  # average later
     else:
-        loss = F.cross_entropy(
-            pred, gold, ignore_index=Constants.PAD, reduction='sum')
+        crossEntropy = nn.CrossEntropyLoss(weight_mask_tmp, reduction='sum', ignore_index=Constants.PAD)
+        loss = crossEntropy(pred, gold)
+        # loss = F.cross_entropy(
+        #    pred, gold, ignore_index=Constants.PAD, reduction='sum')
 
     return loss
 
