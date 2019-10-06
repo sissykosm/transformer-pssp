@@ -112,11 +112,9 @@ def cal_loss(pred, gold, smoothing, weight_mask):
     return loss
 
 
-def train_epoch(model, training_data, optimizer, device, smoothing):
+def train_epoch(model, training_data, optimizer, device, smoothing, weight_mask):
     ''' Epoch operation in training phase'''
-
-    weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
-    weight_mask = torch.tensor(weight_mask_tmp).to(device)
+    
     model.train()
 
     total_loss = 0
@@ -226,6 +224,9 @@ def train(model, training_data, validation_data, optimizer, device, opt):
             log_tf.write('epoch,loss,ppl,accuracy\n')
             log_vf.write('epoch,loss,ppl,accuracy\n')
 
+    weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
+    weight_mask = torch.tensor(weight_mask_tmp).to(device)
+
     train_loss_all = []
     val_loss_all = []
     valid_accus = []
@@ -234,7 +235,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
 
         start = time.time()
         train_loss, train_accu, train_accuracy2 = train_epoch(
-            model, training_data, optimizer, device, smoothing=opt.label_smoothing)
+            model, training_data, optimizer, device, smoothing=opt.label_smoothing, weight_mask=weight_mask)
         print('  - (Training)   loss: {ppl: 8.5f}, accuracy: {accu:3.3f} %, accuracy_right: {accu2:3.3f} % '
               'elapsed: {elapse:3.3f} min'.format(
                   ppl=train_loss, accu=100*train_accu, accu2=100*train_accuracy2,
