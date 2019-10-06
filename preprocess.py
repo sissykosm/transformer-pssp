@@ -56,7 +56,7 @@ def build_vocab_idx(word_insts, min_word_count):
     for word, count in word_count.items():
         if word not in word2idx:
             if count > min_word_count:
-                print(word, len(word2idx))
+                # print(word, len(word2idx))
                 word2idx[word] = len(word2idx)
             else:
                 ignored_word_count += 1
