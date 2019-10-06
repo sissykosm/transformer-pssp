@@ -42,9 +42,9 @@ def get_acc(gt, pred):
                 
     return (1.0 * correct)/len(gt)
 
-def cal_performance(pred, gold, smoothing=False):
+def cal_performance(pred, gold, smoothing=False, weight_mask = []):
     ''' Apply label smoothing if needed '''
-    loss = cal_loss(pred, gold, smoothing)
+    loss = cal_loss(pred, gold, smoothing, weight_mask)
     pred = pred.max(1)[1]
 
     gold = gold.contiguous().view(-1)
@@ -87,11 +87,8 @@ def cal_performance(pred, gold, smoothing=False):
     return loss, n_correct, mean
 
 
-def cal_loss(pred, gold, smoothing):
+def cal_loss(pred, gold, smoothing, weight_mask):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
-
-    weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
-    weight_mask = torch.tensor(weight_mask_tmp)
     gold = gold.contiguous().view(-1)
     # return FocalLoss()(pred, gold)
 
@@ -118,6 +115,8 @@ def cal_loss(pred, gold, smoothing):
 def train_epoch(model, training_data, optimizer, device, smoothing):
     ''' Epoch operation in training phase'''
 
+    weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
+    weight_mask = torch.tensor(weight_mask_tmp).to(device)
     model.train()
 
     total_loss = 0
@@ -140,7 +139,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing):
         pred = model(src_seq, src_sp, src_pos, tgt_seq, tgt_pos)
 
         # backward
-        loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=smoothing)
+        loss, n_correct, accuracy2 = cal_performance(pred, gold, smoothing=smoothing, weight_mask=weight_mask)
         loss.backward()
 
         accu.append(accuracy2)
