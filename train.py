@@ -87,7 +87,7 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     return loss, n_correct, mean
 
 
-def cal_loss(pred, gold, smoothing, weight_mask, crossEntropy):
+def cal_loss(pred, gold, smoothing, crossEntropy):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
     gold = gold.contiguous().view(-1)
     # return FocalLoss()(pred, gold)
