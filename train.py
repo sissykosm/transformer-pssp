@@ -350,7 +350,7 @@ def main():
             betas=(0.9, 0.98), eps=1e-09),
         opt.d_model, opt.n_warmup_steps)
 
-    weight_mask_tmp = [1, 1, 1, 1.5, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
+    weight_mask_tmp = [1, 1, 1, 1.5, 0.7, 2.6, 0.2, 3.9, 0.25, 0.11, 0.1, 0.45]
     weight_mask = torch.tensor(weight_mask_tmp).to(device)
 
     crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
