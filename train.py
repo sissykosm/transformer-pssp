@@ -91,7 +91,7 @@ def cal_loss(pred, gold, smoothing):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
 
     weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 1, 3.9, 0.25, 0.11, 0.1, 0.45]
-
+    weight_mask = torch.tensor(weight_mask_tmp)
     gold = gold.contiguous().view(-1)
     # return FocalLoss()(pred, gold)
 
@@ -107,7 +107,7 @@ def cal_loss(pred, gold, smoothing):
         loss = -(one_hot * log_prb).sum(dim=1)
         loss = loss.masked_select(non_pad_mask).sum()  # average later
     else:
-        crossEntropy = nn.CrossEntropyLoss(weight_mask_tmp, reduction='sum', ignore_index=Constants.PAD)
+        crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
         loss = crossEntropy(pred, gold)
         # loss = F.cross_entropy(
         #    pred, gold, ignore_index=Constants.PAD, reduction='sum')
