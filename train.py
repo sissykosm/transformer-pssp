@@ -82,9 +82,7 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     
     accuracies = []
     for test1, test2 in zip(list_of_lists1, list_of_lists2):
-        print("Sequences:")
         if (len(test1) == len(test2)):
-            print("Same Len! :D")
             accuracies.append(get_acc(test1, test2))
 
     if len(accuracies) == 0:
