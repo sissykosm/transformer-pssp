@@ -66,9 +66,10 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
         if (i != Constants.PAD):
             acc.append(i)
         if (i == Constants.PAD):
-            list_of_lists1.append(acc)
-            acc = []
-
+            if len(acc) > 0:
+                list_of_lists1.append(acc)
+                acc = []
+    
     list_of_lists2 = []
     acc = []
     for i in test2:
