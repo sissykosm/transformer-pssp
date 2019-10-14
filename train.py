@@ -53,22 +53,26 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     n_correct = pred.eq(gold)
     n_correct = n_correct.masked_select(non_pad_mask).sum().item()
 
-    test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
-    test2 = gold.masked_select(non_pad_mask).tolist()
-
+    # test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
+    # test2 = gold.masked_select(non_pad_mask).tolist()
+    test1 = pred.tolist()
+    test2 = pred.tolist()
+ 
     # TODO: Fixing here
     list_of_lists1 = []
     acc = []
     for i in test1:
-        acc.append(i)
-        if (i == Constants.EOS):
+        if (i != Constants.PAD):
+            acc.append(i)
+        if (i == Constants.PAD):
             list_of_lists1.append(acc)
             acc = []
 
     list_of_lists2 = []
     acc = []
     for i in test2:
-        acc.append(i)
+        if (i != Constants.PAD):
+            acc.append(i)
         if (i == Constants.EOS):
             # print(acc)
             list_of_lists2.append(acc)

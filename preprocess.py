@@ -6,7 +6,7 @@ import pickle
 import transformer.Constants as Constants
 
 
-def read_instances_from_file(inst_file, max_sent_len, keep_case):
+def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos = False):
     ''' Convert file into word seq lists and vocab '''
 
     word_insts = []
@@ -21,8 +21,10 @@ def read_instances_from_file(inst_file, max_sent_len, keep_case):
             word_inst = words[:max_sent_len]
 
             if word_inst:
-                word_insts += [[Constants.BOS_WORD] +
-                               word_inst + [Constants.EOS_WORD]]
+                if without_bos_eos:
+                    word_insts += [word_inst]
+                else: 
+                    word_insts += [[Constants.BOS_WORD] + word_inst + [Constants.EOS_WORD]]
             else:
                 word_insts += [None]
 
@@ -97,15 +99,16 @@ def main():
     parser.add_argument('-keep_case', action='store_true')
     parser.add_argument('-share_vocab', action='store_true')
     parser.add_argument('-vocab', default=None)
+    parser.add_argument('-without_bos_eos', default=False)
 
     opt = parser.parse_args()
     opt.max_token_seq_len = opt.max_word_seq_len + 2  # include the <s> and </s>
 
     # Training set
     train_src_word_insts = read_instances_from_file(
-        opt.train_src, opt.max_word_seq_len, opt.keep_case)
+        opt.train_src, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos)
     train_tgt_word_insts = read_instances_from_file(
-        opt.train_tgt, opt.max_word_seq_len, opt.keep_case)
+        opt.train_tgt, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos)
 
     if len(train_src_word_insts) != len(train_tgt_word_insts):
         print('[Warning] The training instance count is not equal.')
@@ -120,9 +123,9 @@ def main():
 
     # Validation set
     valid_src_word_insts = read_instances_from_file(
-        opt.valid_src, opt.max_word_seq_len, opt.keep_case)
+        opt.valid_src, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos)
     valid_tgt_word_insts = read_instances_from_file(
-        opt.valid_tgt, opt.max_word_seq_len, opt.keep_case)
+        opt.valid_tgt, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos)
 
     if len(valid_src_word_insts) != len(valid_tgt_word_insts):
         print('[Warning] The validation instance count is not equal.')

@@ -12,7 +12,7 @@ import transformer.Constants as Constants
 class Beam():
     ''' Beam search '''
 
-    def __init__(self, size, device=False):
+    def __init__(self, size, device=False, without_eos_bos=False):
 
         self.size = size
         self._done = False
@@ -26,7 +26,8 @@ class Beam():
 
         # The outputs at each time-step.
         self.next_ys = [torch.full((size,), Constants.PAD, dtype=torch.long, device=device)]
-        self.next_ys[0][0] = Constants.BOS
+        if not without_eos_bos:
+            self.next_ys[0][0] = Constants.BOS
 
     def get_current_state(self):
         "Get the outputs for the current timestep."
@@ -65,6 +66,7 @@ class Beam():
         self.next_ys.append(best_scores_id - prev_k * num_words)
 
         # End condition is when top-of-beam is EOS.
+        # TODO: Add case for without_eos_bos
         if self.next_ys[-1][0].item() == Constants.EOS:
             self._done = True
             self.all_scores.append(self.scores)
