@@ -144,6 +144,7 @@ class Translator(object):
             src_enc = src_enc.repeat(1, n_bm, 1).view(n_inst * n_bm, len_s, d_h)
 
             # -- Prepare beams
+            # TODO: Make without_eos_bos from opts
             inst_dec_beams = [Beam(n_bm, device=self.device, without_eos_bos=True) for _ in range(n_inst)]
 
             # -- Bookkeeping for active or not
