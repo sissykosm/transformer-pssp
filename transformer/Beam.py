@@ -24,6 +24,7 @@ class Beam():
         # The backpointers at each time-step.
         self.prev_ks = []
 
+        self.without_eos_bos = without_eos_bos
         # The outputs at each time-step.
         self.next_ys = [torch.full((size,), Constants.PAD, dtype=torch.long, device=device)]
         if not without_eos_bos:
@@ -67,7 +68,11 @@ class Beam():
 
         # End condition is when top-of-beam is EOS.
         # TODO: Add case for without_eos_bos
-        if self.next_ys[-1][0].item() == Constants.EOS:
+        end_word = Constants.EOS
+        if self.without_eos_bos:
+            end_word = Constants.PAD
+            
+        if self.next_ys[-1][0].item() == end_word:
             self._done = True
             self.all_scores.append(self.scores)
 
