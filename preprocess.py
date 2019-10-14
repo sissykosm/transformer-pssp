@@ -156,15 +156,15 @@ def main():
         if opt.share_vocab:
             print('[Info] Build shared vocabulary for source and target.')
             word2idx = build_vocab_idx(
-                train_src_word_insts + train_tgt_word_insts, opt.min_word_count)
+                train_src_word_insts + train_tgt_word_insts, opt.min_word_count, opt.without_bos_eos)
             src_word2idx = tgt_word2idx = word2idx
         else:
             print('[Info] Build vocabulary for source.')
             src_word2idx = build_vocab_idx(
-                train_src_word_insts, opt.min_word_count)
+                train_src_word_insts, opt.min_word_count, opt.without_bos_eos)
             print('[Info] Build vocabulary for target.')
             tgt_word2idx = build_vocab_idx(
-                train_tgt_word_insts, opt.min_word_count)
+                train_tgt_word_insts, opt.min_word_count, opt.without_bos_eos)
 
     # word to index
     print('[Info] Convert source word instances into sequences of word index.')
