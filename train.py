@@ -18,6 +18,7 @@ from dataset import TranslationDataset, paired_collate_fn
 from transformer.Models import Transformer
 from transformer.Optim import ScheduledOptim
 from FocalLoss import *
+from tools.earlystopping import EarlyStopping
 
 import matplotlib.pyplot as plt
 
@@ -213,6 +214,7 @@ def test(model, test_data, device, opt, crossEntropy):
 def train(model, training_data, validation_data, optimizer, device, opt, crossEntropy):
     ''' Start training '''
 
+    early_stopping = EarlyStopping()
     log_train_file = None
     log_valid_file = None
 
@@ -254,18 +256,21 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
         checkpoint = {
             'model': model_state_dict,
             'settings': opt,
-            'epoch': epoch_i}
+            'epoch': epoch_i
+        }
 
+        early_stopping(valid_loss, model)
         if opt.save_model:
-            if opt.save_mode == 'all':
-                model_name = opt.save_model + \
-                    '_accu_{accu:3.3f}.chkpt'.format(accu=100*valid_accu)
-                torch.save(checkpoint, model_name)
-            elif opt.save_mode == 'best':
-                model_name = opt.save_model + '.chkpt'
-                if val_accuracy2 >= max(valid_accus):
+            if early_stopping.save_model:
+                if opt.save_mode == 'all':
+                    model_name = opt.save_model + \
+                        '_accu_{accu:3.3f}.chkpt'.format(accu=100*valid_accu)
                     torch.save(checkpoint, model_name)
-                    print('    - [Info] The checkpoint file has been updated.')
+                elif opt.save_mode == 'best':
+                    model_name = opt.save_model + '.chkpt'
+                    if val_accuracy2 >= max(valid_accus):
+                        torch.save(checkpoint, model_name)
+                        print('    - [Info] The checkpoint file has been updated.')
 
         if log_train_file and log_valid_file:
             with open(log_train_file, 'a') as log_tf, open(log_valid_file, 'a') as log_vf:
@@ -277,6 +282,10 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
                     ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu))
         train_loss_all.append(train_loss)
         val_loss_all.append(valid_loss)
+
+        if early_stopping.early_stop:
+            print("Early stopping")
+            break
 
     return train_loss_all, val_loss_all
 
