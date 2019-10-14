@@ -18,7 +18,6 @@ from dataset import TranslationDataset, paired_collate_fn
 from transformer.Models import Transformer
 from transformer.Optim import ScheduledOptim
 from FocalLoss import *
-from tools.earlystopping import EarlyStopping
 
 import matplotlib.pyplot as plt
 
@@ -54,31 +53,26 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     n_correct = pred.eq(gold)
     n_correct = n_correct.masked_select(non_pad_mask).sum().item()
 
-    # test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
-    # test2 = gold.masked_select(non_pad_mask).tolist()
-    test1 = pred.tolist()
-    test2 = gold.tolist()
- 
+    test1 = pred.masked_select(pred.ne(Constants.PAD)).tolist()
+    test2 = gold.masked_select(non_pad_mask).tolist()
+
     # TODO: Fixing here
     list_of_lists1 = []
     acc = []
     for i in test1:
-        if (i != Constants.PAD):
-            acc.append(i)
-        else:
-            if len(acc) > 0:
-                list_of_lists1.append(acc)
-                acc = []
-    
+        acc.append(i)
+        if (i == Constants.EOS):
+            list_of_lists1.append(acc)
+            acc = []
+
     list_of_lists2 = []
     acc = []
     for i in test2:
-        if (i != Constants.PAD):
-            acc.append(i)
-        else:
-            if len(acc) > 0:
-                list_of_lists2.append(acc)
-                acc = []
+        acc.append(i)
+        if (i == Constants.EOS):
+            # print(acc)
+            list_of_lists2.append(acc)
+            acc = []
     
     accuracies = []
     for test1, test2 in zip(list_of_lists1, list_of_lists2):
@@ -215,7 +209,6 @@ def test(model, test_data, device, opt, crossEntropy):
 def train(model, training_data, validation_data, optimizer, device, opt, crossEntropy):
     ''' Start training '''
 
-    early_stopping = EarlyStopping()
     log_train_file = None
     log_valid_file = None
 
@@ -232,7 +225,7 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
 
     train_loss_all = []
     val_loss_all = []
-    valid_accus = []
+    valid_losses = []
     for epoch_i in range(opt.epoch):
         print('[ Epoch', epoch_i, ']')
 
@@ -251,27 +244,24 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
                   ppl=valid_loss, accu=100*valid_accu, accu2=100*val_accuracy2,
                   elapse=(time.time()-start)/60))
 
-        valid_accus += [val_accuracy2]
+        valid_losses += [valid_loss]
 
         model_state_dict = model.state_dict()
         checkpoint = {
             'model': model_state_dict,
             'settings': opt,
-            'epoch': epoch_i
-        }
+            'epoch': epoch_i}
 
-        early_stopping(valid_loss, model)
         if opt.save_model:
-            if early_stopping.save_model:
-                if opt.save_mode == 'all':
-                    model_name = opt.save_model + \
-                        '_accu_{accu:3.3f}.chkpt'.format(accu=100*valid_accu)
+            if opt.save_mode == 'all':
+                model_name = opt.save_model + \
+                    '_accu_{accu:3.3f}.chkpt'.format(accu=100*valid_accu)
+                torch.save(checkpoint, model_name)
+            elif opt.save_mode == 'best':
+                model_name = opt.save_model + '.chkpt'
+                if valid_loss >= max(valid_losses):
                     torch.save(checkpoint, model_name)
-                elif opt.save_mode == 'best':
-                    model_name = opt.save_model + '.chkpt'
-                    if val_accuracy2 >= max(valid_accus):
-                        torch.save(checkpoint, model_name)
-                        print('    - [Info] The checkpoint file has been updated.')
+                    print('    - [Info] The checkpoint file has been updated.')
 
         if log_train_file and log_valid_file:
             with open(log_train_file, 'a') as log_tf, open(log_valid_file, 'a') as log_vf:
@@ -283,10 +273,6 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
                     ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu))
         train_loss_all.append(train_loss)
         val_loss_all.append(valid_loss)
-
-        if early_stopping.early_stop:
-            print("Early stopping")
-            break
 
     return train_loss_all, val_loss_all
 
@@ -367,7 +353,7 @@ def main():
     # weight_mask_tmp = [1, 1, 1, 1, 0.7, 2.6, 0.2, 3.9, 0.25, 0.11, 0.1, 0.45]
     # weight_mask = torch.tensor(weight_mask_tmp).to(device)
     weight_mask = None
-
+    
     crossEntropy = nn.CrossEntropyLoss(weight_mask, reduction='sum', ignore_index=Constants.PAD)
 
     train_loss, val_loss = train(
