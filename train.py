@@ -74,7 +74,7 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     for i in test2:
         if (i != Constants.PAD):
             acc.append(i)
-        if (i == Constants.EOS):
+        if (i == Constants.PAD):
             # print(acc)
             list_of_lists2.append(acc)
             acc = []
