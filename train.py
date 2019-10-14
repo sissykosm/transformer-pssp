@@ -58,8 +58,6 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
     # test2 = gold.masked_select(non_pad_mask).tolist()
     test1 = pred.tolist()
     test2 = pred.tolist()
-    print(test1)
-    print(test2)
  
     # TODO: Fixing here
     list_of_lists1 = []
@@ -70,7 +68,6 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
         else:
             if len(acc) > 0:
                 list_of_lists1.append(acc)
-                print(acc)
                 acc = []
     
     list_of_lists2 = []
@@ -81,7 +78,6 @@ def cal_performance(pred, gold, smoothing=False, crossEntropy=None):
         else:
             if len(acc) > 0:
                 list_of_lists2.append(acc)
-                print(acc)
                 acc = []
     
     accuracies = []
