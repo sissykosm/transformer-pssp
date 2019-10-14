@@ -99,7 +99,7 @@ def main():
     parser.add_argument('-keep_case', action='store_true')
     parser.add_argument('-share_vocab', action='store_true')
     parser.add_argument('-vocab', default=None)
-    parser.add_argument('-without_bos_eos', default=False)
+    parser.add_argument('-without_bos_eos', action='store_true')
 
     opt = parser.parse_args()
     opt.max_token_seq_len = opt.max_word_seq_len + 2  # include the <s> and </s>
