@@ -272,7 +272,7 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
                 torch.save(checkpoint, model_name)
             elif opt.save_mode == 'best':
                 model_name = opt.save_model + '.chkpt'
-                if valid_loss >= max(valid_losses):
+                if valid_loss <= min(valid_losses):
                     torch.save(checkpoint, model_name)
                     print('    - [Info] The checkpoint file has been updated.')
 

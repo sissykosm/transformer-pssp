@@ -77,7 +77,7 @@ def createArgs(
     return base
 
 def main():
-    totalProcs = len(d_modelArray) * len(n_layersArray) * len(dropoutArray)
+    totalProcs = len(d_modelArray) * len(n_layersArray) * len(dropoutArray) * len(attentionHeadsArray)
     procedures = []
     procNum = 1
     
