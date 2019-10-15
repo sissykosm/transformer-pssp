@@ -315,8 +315,10 @@ def main():
 
     parser.add_argument('-log', default=None)
     parser.add_argument('-save_model', default="model")
+    parser.add_argument('-save_plot', default="loss.png")
     parser.add_argument('-save_mode', type=str,
                         choices=['all', 'best'], default='best')
+
 
     parser.add_argument('-no_cuda', action='store_true')
     parser.add_argument('-label_smoothing', action='store_true')
@@ -375,7 +377,7 @@ def main():
     test(transformer, test_data, device, opt, crossEntropy)
     print("Making loss graph...")
     plt = plot(train_loss, val_loss)
-    plt.savefig('loss.png')
+    plt.savefig(opt.save_plot + ".png")
     print("Finished!")
 
 

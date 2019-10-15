@@ -23,7 +23,8 @@ def createArgs(
     n_warmup_steps=None,
     d_inner_hid=None,
     data=None,
-    save_model=None
+    save_model=None,
+    save_plot=None
 ): 
     base = ["python3", scriptName]
 
@@ -69,6 +70,9 @@ def createArgs(
     if save_model != None:
         base += ["-save_model", save_model]
 
+    if save_plot != None:
+        base += ["-save_plot", save_plot]
+
     return base
 
 def main():
@@ -94,7 +98,8 @@ def main():
                     dropout=dropout,
                     d_inner_hid=int(d_model*4),
                     log="./logs/log" + str(procNum),
-                    save_model="./models/model" + str(procNum)
+                    save_model="./models/model" + str(procNum),
+                    save_plot="./plots/plot" + str(procNum)
                 )
 
                 print(args)
