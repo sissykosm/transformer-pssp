@@ -1,4 +1,5 @@
 from subprocess import run, PIPE, Popen, TimeoutExpired
+import os
 
 scriptName = "./train.py"
 
@@ -74,6 +75,12 @@ def main():
     totalProcs = len(d_modelArray) * len(n_layersArray) * len(dropoutArray)
     procedures = []
     procNum = 1
+    
+    if not os.path.exists("./logs"):
+        os.makedirs("./logs")
+
+    if not os.path.exists("./models"):
+        os.makedirs("./models")
 
     for d_model in d_modelArray:
         for n_layers in n_layersArray:
