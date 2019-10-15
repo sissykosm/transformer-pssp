@@ -92,7 +92,10 @@ def main():
                 
                 print("[MONITORER] Started neural network " + str(procNum) + "/" + str(totalProcs))
 
-                proc.wait()
+                returnCode = proc.wait()
+                if returnCode != 0:
+                    print("[MONITORER] Oops! Something broke!")
+                    
                 procNum += 1
 
     print("Spawned " + str(len(procedures)) + " processes.")
