@@ -314,7 +314,7 @@ def main():
     parser.add_argument('-proj_share_weight', action='store_true')
 
     parser.add_argument('-log', default=None)
-    parser.add_argument('-save_model', default=True)
+    parser.add_argument('-save_model', default="model")
     parser.add_argument('-save_mode', type=str,
                         choices=['all', 'best'], default='best')
 

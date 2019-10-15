@@ -21,7 +21,8 @@ def createArgs(
     n_layers=None,
     n_warmup_steps=None,
     d_inner_hid=None,
-    data=None
+    data=None,
+    save_model=None
 ): 
     base = ["python3", scriptName]
 
@@ -64,6 +65,9 @@ def createArgs(
     if data != None:
         base += ["-data", data]
 
+    if save_model != None:
+        base += ["-save_model", save_model]
+
     return base
 
 def main():
@@ -82,7 +86,8 @@ def main():
                     n_layers=n_layers, 
                     dropout=dropout,
                     d_inner_hid=int(d_model*4),
-                    log="log" + str(procNum)
+                    log="./logs/log" + str(procNum),
+                    save_model="./models/model" + str(procNum)
                 )
 
                 print(args)
