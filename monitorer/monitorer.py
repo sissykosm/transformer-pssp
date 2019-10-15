@@ -1,6 +1,6 @@
 from subprocess import run, PIPE, Popen, TimeoutExpired
 
-scriptName = "./monitorer/mock-process.py"
+scriptName = "./train.py"
 
 batch_size = 5
 
@@ -95,7 +95,7 @@ def main():
                 returnCode = proc.wait()
                 if returnCode != 0:
                     print("[MONITORER] Oops! Something broke!")
-                    
+
                 procNum += 1
 
     print("Spawned " + str(len(procedures)) + " processes.")
