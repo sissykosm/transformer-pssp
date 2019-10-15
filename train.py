@@ -204,7 +204,7 @@ def test(model, test_data, device, opt, crossEntropy):
         log_test_file = opt.log + '.test.log'
 
         with open(log_test_file, 'w') as log_test:
-            log_test.write('loss,ppl,accuracy\n')
+            log_test.write('loss,accuracy,real_accuracy,elapsed\n')
 
     start = time.time()
     valid_loss, valid_accu, new_accu = eval_epoch(model, test_data, device, crossEntropy)
@@ -216,7 +216,7 @@ def test(model, test_data, device, opt, crossEntropy):
     if log_test_file:
             with open(log_test_file, 'a') as log_test:
                 log_test.write('{loss: 8.5f},{accu1: 3.3f},{accu2:3.3f},{elapse:3.3f}\n'.format(
-                  ppl=valid_loss, accu=100*valid_accu, accu2=100*new_accu,
+                  loss=valid_loss, accu1=100*valid_accu, accu2=100*new_accu,
                   elapse=(time.time()-start)/60))
 
 def train(model, training_data, validation_data, optimizer, device, opt, crossEntropy):
@@ -233,8 +233,8 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
             log_train_file, log_valid_file))
 
         with open(log_train_file, 'w') as log_tf, open(log_valid_file, 'w') as log_vf:
-            log_tf.write('epoch,loss,ppl,accuracy\n')
-            log_vf.write('epoch,loss,ppl,accuracy\n')
+            log_tf.write('epoch,loss,accuracy,real_accuracy,elapsed\n')
+            log_vf.write('epoch,loss,accuracy,real_accuracy,elapsed\n')
 
     train_loss_all = []
     val_loss_all = []
