@@ -86,6 +86,9 @@ def main():
     if not os.path.exists("./models"):
         os.makedirs("./models")
 
+    if not os.path.exists("./plots"):
+        os.makedirs("./plots")
+
     for d_model in d_modelArray:
         for n_layers in n_layersArray:
             for dropout in dropoutArray:
