@@ -279,10 +279,10 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
         if log_train_file and log_valid_file:
             with open(log_train_file, 'a') as log_tf, open(log_valid_file, 'a') as log_vf:
                 log_tf.write('{epoch},{loss: 8.5f},{accu1: 3.3f},{accu2:3.3f},{elapse:3.3f}\n'.format(
-                  epoch=epoch_i, loss=train_loss, accu=100*train_accu, accu2=100*train_accuracy2,
+                  epoch=epoch_i, loss=train_loss, accu1=100*train_accu, accu2=100*train_accuracy2,
                   elapse=(time.time()-start)/60))
                 log_vf.write('{epoch},{loss: 8.5f},{accu1: 3.3f},{accu2:3.3f},{elapse:3.3f}\n'.format(
-                  epoch=epoch_i, loss=valid_loss, accu=100*valid_accu, accu2=100*val_accuracy2,
+                  epoch=epoch_i, loss=valid_loss, accu1=100*valid_accu, accu2=100*val_accuracy2,
                   elapse=(time.time()-start)/60))
         train_loss_all.append(train_loss)
         val_loss_all.append(valid_loss)
