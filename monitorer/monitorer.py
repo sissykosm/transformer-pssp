@@ -8,6 +8,7 @@ batch_size = 5
 d_modelArray = [32, 64, 128, 256, 512]
 n_layersArray = [1, 2, 3, 4, 5, 6]
 dropoutArray = [0.01, 0.1, 0.6]
+attentionHeadsArray = [8, 16]
 
 def createArgs(
     batch_size=None,
@@ -92,18 +93,20 @@ def main():
     for d_model in d_modelArray:
         for n_layers in n_layersArray:
             for dropout in dropoutArray:
-                args = createArgs(
-                    batch_size=batch_size,
-                    d_model=d_model,
-                    d_v=int(d_model/4),
-                    d_k=int(d_model/4),
-                    n_layers=n_layers, 
-                    dropout=dropout,
-                    d_inner_hid=int(d_model*4),
-                    log="./logs/log" + str(procNum),
-                    save_model="./models/model" + str(procNum),
-                    save_plot="./plots/plot" + str(procNum)
-                )
+                for n_head in attentionHeadsArray:
+                    args = createArgs(
+                        batch_size=batch_size,
+                        d_model=d_model,
+                        d_v=int(d_model/4),
+                        d_k=int(d_model/4),
+                        n_layers=n_layers, 
+                        dropout=dropout,
+                        d_inner_hid=int(d_model*4),
+                        log="./logs/log" + str(procNum),
+                        save_model="./models/model" + str(procNum),
+                        save_plot="./plots/plot" + str(procNum),
+                        n_head=n_head
+                    )
 
                 print(args)
 
