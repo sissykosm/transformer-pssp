@@ -5,10 +5,15 @@ scriptName = "./train.py"
 
 batch_size = 20
 
-d_modelArray = [32, 64, 128, 256, 512].reverse()
-n_layersArray = [1, 2, 3, 4, 5, 6].reverse()
-dropoutArray = [0.01, 0.1, 0.6].reverse()
-attentionHeadsArray = [8, 16].reverse()
+d_modelArray = [32, 64, 128, 256, 512]
+n_layersArray = [1, 2, 3, 4, 5, 6]
+dropoutArray = [0.01, 0.1, 0.6]
+attentionHeadsArray = [8, 16]
+
+d_modelArray.reverse()
+n_layersArray.reverse()
+dropoutArray.reverse()
+attentionHeadsArray.reverse()
 
 def createArgs(
     batch_size=None,
