@@ -105,7 +105,8 @@ def main():
                         log="./logs/log" + str(procNum),
                         save_model="./models/model" + str(procNum),
                         save_plot="./plots/plot" + str(procNum),
-                        n_head=n_head
+                        n_head=n_head,
+                        epoch=200
                     )
 
                 print(args)

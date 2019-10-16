@@ -22,6 +22,7 @@ from FocalLoss import *
 import matplotlib.pyplot as plt
 
 from torch.utils.data.sampler import SubsetRandomSampler
+from torch.nn.parallel import DataParallel
 
 def plot(train_loss, val_loss):
     epoch_count = range(1, len(train_loss)+1)
@@ -357,7 +358,9 @@ def main():
         d_inner=opt.d_inner_hid,
         n_layers=opt.n_layers,
         n_head=opt.n_head,
-        dropout=opt.dropout).to(device)
+        dropout=opt.dropout)
+
+    transformer = DataParallel(transformer, range(0, torch.cuda.device_count()))
 
     optimizer = ScheduledOptim(
         optim.Adam(
@@ -436,7 +439,6 @@ def prepare_dataloaders(data, opt):
         collate_fn=paired_collate_fn)
 
     return train_loader, valid_loader, test_loader
-
 
 if __name__ == '__main__':
     main()
