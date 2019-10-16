@@ -240,6 +240,7 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
     train_loss_all = []
     val_loss_all = []
     valid_losses = []
+    patience = 10
     for epoch_i in range(opt.epoch):
         print('[ Epoch', epoch_i, ']')
 
@@ -276,6 +277,15 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
                 if valid_loss <= min(valid_losses):
                     torch.save(checkpoint, model_name)
                     print('    - [Info] The checkpoint file has been updated.')
+
+        if valid_loss > min(valid_losses):
+            patience = patience - 1
+        else: 
+            patience = 10
+
+        if patience < 1:
+            print("- [Info] Early Stopping...")
+            return train_loss_all, val_loss_all
 
         if log_train_file and log_valid_file:
             with open(log_train_file, 'a') as log_tf, open(log_valid_file, 'a') as log_vf:
