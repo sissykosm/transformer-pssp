@@ -3,7 +3,7 @@ import os
 
 scriptName = "./train.py"
 
-batch_size = 20
+batch_size = 10
 
 d_modelArray = [32, 64, 128, 256, 512]
 n_layersArray = [1, 2, 3, 4, 5, 6]
