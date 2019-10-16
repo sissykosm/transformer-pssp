@@ -277,8 +277,10 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
                     torch.save(checkpoint, model_name)
                     print('    - [Info] The checkpoint file has been updated.')
 
-        if valid_loss > valid_losses[len(valid_losses) - 1]:
+        if valid_loss > min(valid_losses):
             patience = patience - 1
+        else: 
+            patience = 10
 
         if patience < 1:
             return train_loss_all, val_loss_all
