@@ -114,7 +114,7 @@ def cal_loss(pred, gold, smoothing, crossEntropy):
 
 def train_epoch(model, training_data, optimizer, device, smoothing, crossEntropy):
     ''' Epoch operation in training phase'''
-    
+    model.cuda()
     model.train()
 
     total_loss = 0
