@@ -114,7 +114,6 @@ def cal_loss(pred, gold, smoothing, crossEntropy):
 
 def train_epoch(model, training_data, optimizer, device, smoothing, crossEntropy):
     ''' Epoch operation in training phase'''
-    model.cuda()
     model.train()
 
     total_loss = 0
@@ -129,7 +128,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing, crossEntropy
         # prepare data
 
         src_seq, src_sp, src_pos, tgt_seq, tgt_pos = map(
-            lambda x: x.cuda(), batch)
+            lambda x: x.to(device), batch)
         gold = tgt_seq[:, 1:]
 
         # forward
@@ -175,7 +174,7 @@ def eval_epoch(model, validation_data, device, crossEntropy):
 
             # prepare data
             src_seq, src_sp, src_pos, tgt_seq, tgt_pos = map(
-                lambda x: x.cuda(), batch)
+                lambda x: x.to(device), batch)
             gold = tgt_seq[:, 1:]
 
             # forward
@@ -345,6 +344,7 @@ def main():
     print(opt)
 
     device = torch.device('cuda' if opt.cuda else 'cpu')
+
     transformer = Transformer(
         opt.src_vocab_size,
         opt.tgt_vocab_size,
@@ -360,7 +360,7 @@ def main():
         n_head=opt.n_head,
         dropout=opt.dropout)
 
-    transformer = DataParallel(transformer, range(0, torch.cuda.device_count()))
+    transformer = DataParallel(transformer, range(0, torch.cuda.device_count())).to(device)
 
     optimizer = ScheduledOptim(
         optim.Adam(
