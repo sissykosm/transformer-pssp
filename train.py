@@ -129,7 +129,7 @@ def train_epoch(model, training_data, optimizer, device, smoothing, crossEntropy
         # prepare data
 
         src_seq, src_sp, src_pos, tgt_seq, tgt_pos = map(
-            lambda x: x.to(device), batch)
+            lambda x: x.cuda(), batch)
         gold = tgt_seq[:, 1:]
 
         # forward
@@ -175,7 +175,7 @@ def eval_epoch(model, validation_data, device, crossEntropy):
 
             # prepare data
             src_seq, src_sp, src_pos, tgt_seq, tgt_pos = map(
-                lambda x: x.to(device), batch)
+                lambda x: x.cuda(), batch)
             gold = tgt_seq[:, 1:]
 
             # forward
