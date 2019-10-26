@@ -1,4 +1,5 @@
 import numpy as np
+import argparse
 
 # calculating accuracy 
 def get_acc(gt,pred):
@@ -11,8 +12,16 @@ def get_acc(gt,pred):
     return (1.0 * correct)/len(gt)
 
 try:
-    fp = open('./pred_wb10.txt')
-    fp2 = open('./pssp-data/pss_test.txt')
+    parser = argparse.ArgumentParser(description='translate.py')
+
+    parser.add_argument('-txt', required=True,
+                        help='Path to decoded text file')
+
+    parser.add_argument('-test', help='Path to test labels file', default="./pssp-data/pss_test.txt")
+
+    opt = parser.parse_args()
+    fp = open(opt.txt)
+    fp2 = open(opt.test)
     line = fp.readline()
     res = fp2.readline()
     acc_list = []
