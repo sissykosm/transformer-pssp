@@ -75,7 +75,7 @@ def main():
                         model='./' + folder + '/model' + str(number) + '.chkpt',
                         vocab="./pssp-data/data.pt",
                         beam_size=1,
-                        output="./decoded/pred-" + folder + "-" + number + ".txt"
+                        output="./decoded/pred-" + folder + "-" + str(number) + ".txt"
                     )
 
         print(args)
