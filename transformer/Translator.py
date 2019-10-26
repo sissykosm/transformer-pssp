@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from collections import OrderedDict
+
 from transformer.Models import Transformer
 from transformer.Beam import Beam
 
@@ -33,7 +35,13 @@ class Translator(object):
             n_head=model_opt.n_head,
             dropout=model_opt.dropout)
 
-        model.load_state_dict(checkpoint['model'])
+        model_state = OrderedDict()
+        for key, value in checkpoint['model'].items():
+            key = key[7:]
+            model_state[key] = value
+
+        model.load_state_dict(model_state)
+
         print('[Info] Trained model state loaded.')
 
         model.word_prob_prj = nn.LogSoftmax(dim=1)
