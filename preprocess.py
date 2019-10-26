@@ -6,7 +6,7 @@ import pickle
 import transformer.Constants as Constants
 
 
-def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos = False):
+def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos = False, n = 1):
     ''' Convert file into word seq lists and vocab '''
 
     word_insts = []
@@ -15,7 +15,7 @@ def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos
         for sent in f:
             if not keep_case:
                 sent = sent.lower()
-            words = sent.split()
+            words = out = [(sent[i:i+n]) for i in range(0, len(sent), n)]  # TODO:
             if len(words) > max_sent_len:
                 trimmed_sent_count += 1
             word_inst = words[:max_sent_len]
@@ -106,15 +106,17 @@ def main():
     parser.add_argument('-share_vocab', action='store_true')
     parser.add_argument('-vocab', default=None)
     parser.add_argument('-without_bos_eos', action='store_true')
+    parser.add_argument('-src_ngrams', type=int, default=1)
+    parser.add_argument('-tgt_ngrams', type=int, default=1)
 
     opt = parser.parse_args()
     opt.max_token_seq_len = opt.max_word_seq_len + 2  # include the <s> and </s>
 
     # Training set
     train_src_word_insts = read_instances_from_file(
-        opt.train_src, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos)
+        opt.train_src, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos, opt.src_ngrams)
     train_tgt_word_insts = read_instances_from_file(
-        opt.train_tgt, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos)
+        opt.train_tgt, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos, opt.tgt_ngrams)
 
     if len(train_src_word_insts) != len(train_tgt_word_insts):
         print('[Warning] The training instance count is not equal.')
