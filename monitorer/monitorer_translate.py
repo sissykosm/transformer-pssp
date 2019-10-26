@@ -47,7 +47,7 @@ def createArgs(
         base += ["-batch_size", str(batch_size)]
 
     if batch_size != None:
-        base += ["-beam_size", str(batch_size)]
+        base += ["-beam_size", str(beam_size)]
 
     if model != None:
         base += ["-model", model]
