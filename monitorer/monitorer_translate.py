@@ -3,7 +3,7 @@ import os
 
 scriptName = "./translate.py"
 
-batch_size = 20
+batch_size = 5
 
 modelArray = [
     ['models', 89],
