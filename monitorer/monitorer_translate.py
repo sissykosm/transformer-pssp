@@ -65,28 +65,29 @@ def main():
     procedures = []
     procNum = 1
     
-    if not os.path.exists("./decoded"):
-        os.makedirs("./decoded")
+    if not os.path.exists("./decoded_beam"):
+        os.makedirs("./decoded_beam")
 
     for model in modelArray:
-        [folder, number] = model
-        args = createArgs(
+        for beam_size in [5,10]:
+            [folder, number] = model
+            args = createArgs(
                         batch_size=batch_size,
                         model='./' + folder + '/model' + str(number) + '.chkpt',
                         vocab="./pssp-data/data.pt",
-                        beam_size=1,
-                        output="./decoded/pred-" + folder + "-" + str(number) + ".txt"
+                        beam_size=beam_size,
+                        output="./decoded_beam/pred-" + folder + "-" + str(number) + "-" + str(beam_size) + ".txt"
                     )
 
-        print(args)
-        proc = Popen(args)
-        procedures.append(proc)
+            print(args)
+            proc = Popen(args)
+            procedures.append(proc)
         
-        print("[MONITORER] Started decoder network " + str(procNum) + "/" + str(totalProcs))
-        returnCode = proc.wait()
-        if returnCode != 0:
-            print("[MONITORER] Oops! Something broke!")
-        procNum += 1
+            print("[MONITORER] Started decoder network " + str(procNum) + "/" + str(totalProcs))
+            returnCode = proc.wait()
+            if returnCode != 0:
+                print("[MONITORER] Oops! Something broke!")
+            procNum += 1
 
     print("Spawned " + str(len(procedures)) + " processes.")
 
