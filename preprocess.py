@@ -15,7 +15,12 @@ def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos
         for sent in f:
             if not keep_case:
                 sent = sent.lower()
-            words = out = [(sent[i:i+n]) for i in range(0, len(sent), n)]  # TODO:
+            rawwords = [(sent[i:i+n]) for i in range(0, len(sent), n)]  # TODO:
+            words = []
+            for i in rawwords:
+                if i != ' ' or i != '/n':
+                    words.append(i)
+
             if len(words) > max_sent_len:
                 trimmed_sent_count += 1
             word_inst = words[:max_sent_len]
