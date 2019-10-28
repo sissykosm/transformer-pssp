@@ -120,11 +120,18 @@ def main():
     opt = parser.parse_args()
     opt.max_token_seq_len = opt.max_word_seq_len + 2  # include the <s> and </s>
 
+    src_n = 1
+    if opt.src_bigrams:
+        src_n = 2
+    
+    tgt_n = 1
+    if opt.tgt_bigrams:
+        tgt_n = 2
     # Training set
     train_src_word_insts = read_instances_from_file(
-        opt.train_src, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos, opt.src_bigrams)
+        opt.train_src, int(opt.max_word_seq_len/src_n), opt.keep_case, opt.without_bos_eos, opt.src_bigrams)
     train_tgt_word_insts = read_instances_from_file(
-        opt.train_tgt, opt.max_word_seq_len, opt.keep_case, opt.without_bos_eos, opt.tgt_bigrams)
+        opt.train_tgt, int(opt.max_word_seq_len/tgt_n), opt.keep_case, opt.without_bos_eos, opt.tgt_bigrams)
 
     if len(train_src_word_insts) != len(train_tgt_word_insts):
         print('[Warning] The training instance count is not equal.')
