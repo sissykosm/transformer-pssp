@@ -53,11 +53,12 @@ def main():
     test_src_insts = convert_instance_to_idx_seq(
         test_src_word_insts, preprocess_data['dict']['src'])
     '''
+    model = torch.load(opt.model)
 
     test_loader = torch.utils.data.DataLoader(
         TranslationDataset(
-            src_word2idx=preprocess_data['dict']['src'],
-            tgt_word2idx=preprocess_data['dict']['tgt'],
+            src_word2idx=model['settings']['src_word2idx'],
+            tgt_word2idx=preprocess_data['dict']['tgt_word2idx'],
             src_insts=preprocess_data['valid']['src'],
             sp_insts=preprocess_data['valid']['sp']),
         num_workers=2,

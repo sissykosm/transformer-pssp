@@ -1,4 +1,5 @@
 from subprocess import run, PIPE, Popen, TimeoutExpired
+import argparse
 import os
 
 scriptName = "./train.py"
@@ -8,7 +9,7 @@ batch_size = 10
 d_modelArray = [32, 64, 128, 256, 512]
 n_layersArray = [1, 2, 3, 4, 5, 6]
 dropoutArray = [0.01, 0.1, 0.6]
-attentionHeadsArray = [8, 16]
+attentionHeadsArray = [8]
 
 d_modelArray.reverse()
 n_layersArray.reverse()
@@ -82,6 +83,11 @@ def createArgs(
     return base
 
 def main():
+    parser = argparse.ArgumentParser()
+    # To make the input integers
+    parser.add_argument('--only', nargs='+', type=int, default=[])
+    opt = parser.parse_args()
+
     totalProcs = len(d_modelArray) * len(n_layersArray) * len(dropoutArray) * len(attentionHeadsArray)
     procedures = []
     procNum = 1
@@ -99,6 +105,11 @@ def main():
         for n_layers in n_layersArray:
             for dropout in dropoutArray:
                 for n_head in attentionHeadsArray:
+                    if len(opt.only) > 0:
+                        if procNum not in opt.only:
+                            procNum += 1
+                            continue
+
                     args = createArgs(
                         batch_size=batch_size,
                         d_model=d_model,

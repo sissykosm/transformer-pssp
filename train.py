@@ -346,6 +346,9 @@ def main():
     opt.src_vocab_size = training_data.dataset.src_vocab_size
     opt.tgt_vocab_size = training_data.dataset.tgt_vocab_size
 
+    opt.vocab_src = training_data.dataset.src_word2idx
+    opt.vocab_tgt = training_data.dataset.tgt_word2idx
+
     #========= Preparing Model =========#
     if opt.embs_share_weight:
         assert training_data.dataset.src_word2idx == training_data.dataset.tgt_word2idx, \
