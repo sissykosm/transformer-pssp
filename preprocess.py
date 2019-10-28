@@ -21,7 +21,6 @@ def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos
                 for i in range(0, len(words)):
                     if i % 2 != 0:
                         res.append(words[i-1]+words[i])
-                print(res)
                 words = res
 
             if len(words) > max_sent_len:
