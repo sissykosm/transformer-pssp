@@ -55,7 +55,8 @@ def build_vocab_idx(word_insts, min_word_count, without_bos_eos = False):
         Constants.BOS_WORD: Constants.BOS,
         Constants.EOS_WORD: Constants.EOS,
         Constants.PAD_WORD: Constants.PAD,
-        Constants.UNK_WORD: Constants.UNK}
+        Constants.UNK_WORD: Constants.UNK
+    }
     if without_bos_eos:
         word2idx = {
             Constants.PAD_WORD: Constants.PAD,
