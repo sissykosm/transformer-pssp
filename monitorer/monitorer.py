@@ -104,26 +104,25 @@ def main():
     for d_model in d_modelArray:
         for n_layers in n_layersArray:
             for dropout in dropoutArray:
-                for n_head in attentionHeadsArray:
-                    if len(opt.only) > 0:
-                        if procNum not in opt.only:
-                            procNum += 1
-                            continue
+                if len(opt.only) > 0:
+                    if procNum not in opt.only:
+                        procNum += 1
+                        continue
 
-                    args = createArgs(
-                        batch_size=batch_size,
-                        d_model=d_model,
-                        d_v=int(d_model/4),
-                        d_k=int(d_model/4),
-                        n_layers=n_layers, 
-                        dropout=dropout,
-                        d_inner_hid=int(d_model*4),
-                        log="./logs/log" + str(procNum),
-                        save_model="./models/model" + str(procNum),
-                        save_plot="./plots/plot" + str(procNum),
-                        n_head=n_head,
-                        epoch=200
-                    )
+                args = createArgs(
+                    batch_size=batch_size,
+                    d_model=d_model,
+                    d_v=int(d_model/4),
+                    d_k=int(d_model/4),
+                    n_layers=n_layers, 
+                    dropout=dropout,
+                    d_inner_hid=int(d_model*4),
+                    log="./logs/log" + str(procNum),
+                    save_model="./models/model" + str(procNum),
+                    save_plot="./plots/plot" + str(procNum),
+                    n_head=8,
+                    epoch=200
+                )
 
                 print(args)
 
