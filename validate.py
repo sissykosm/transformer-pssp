@@ -48,7 +48,3 @@ try:
 finally:
     fp.close()
     fp2.close()
-
-
-
-            
