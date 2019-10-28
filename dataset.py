@@ -23,11 +23,12 @@ def collate_fn_x(insts, sp_insts):
         inst + [Constants.PAD] * (max_len - len(inst))
         for inst in insts])
 
+    max_len2 = max(len(inst) for inst in sp_insts)
     batch_sp = np.array([[
-        inst.tolist() + [Constants.PAD] * (max_len - len(inst))
+        inst.tolist() + [Constants.PAD] * (max_len2 - len(inst))
         for inst in sp]
         for sp in sp_insts])
-
+    
     batch_pos = np.array([
         [pos_i+1 if w_i != Constants.PAD else 0
          for pos_i, w_i in enumerate(inst)] for inst in batch_seq])
