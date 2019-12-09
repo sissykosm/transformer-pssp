@@ -239,7 +239,8 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
     train_loss_all = []
     val_loss_all = []
     valid_losses = []
-    patience = 10
+    patience_fixed = 50
+    patience = patience_fixed
     for epoch_i in range(opt.epoch):
         print('[ Epoch', epoch_i, ']')
 
@@ -280,7 +281,7 @@ def train(model, training_data, validation_data, optimizer, device, opt, crossEn
         if valid_loss > min(valid_losses):
             patience = patience - 1
         else: 
-            patience = 10
+            patience = patience_fixed
 
         if patience < 1:
             print("- [Info] Early Stopping...")
