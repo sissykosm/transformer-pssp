@@ -19,8 +19,7 @@ def read_instances_from_file(inst_file, max_sent_len, keep_case, without_bos_eos
             if bigrams:
                 res = []
                 for i in range(0, len(words)):
-                    if i % 2 != 0:
-                        res.append(words[i-1]+words[i])
+                    res.append(words[i-1]+words[i])
                 words = res
 
             if len(words) > max_sent_len:
@@ -121,12 +120,12 @@ def main():
     opt.max_token_seq_len = opt.max_word_seq_len + 2  # include the <s> and </s>
 
     src_n = 1
-    if opt.src_bigrams:
-        src_n = 2
+    '''if opt.src_bigrams:
+        src_n = 2'''
     
     tgt_n = 1
-    if opt.tgt_bigrams:
-        tgt_n = 2
+    '''if opt.tgt_bigrams:
+        tgt_n = 2'''
     # Training set
     train_src_word_insts = read_instances_from_file(
         opt.train_src, int(opt.max_word_seq_len/src_n), opt.keep_case, opt.without_bos_eos, opt.src_bigrams)
@@ -143,6 +142,8 @@ def main():
     # - Remove empty instances
     train_src_word_insts, train_tgt_word_insts = list(zip(*[
         (s, t) for s, t in zip(train_src_word_insts, train_tgt_word_insts) if s and t]))
+
+    #print(train_src_word_insts)
 
     # Validation set
     valid_src_word_insts = read_instances_from_file(
@@ -195,7 +196,8 @@ def main():
         train_tgt_word_insts, tgt_word2idx)
     valid_tgt_insts = convert_instance_to_idx_seq(
         valid_tgt_word_insts, tgt_word2idx)
-
+    
+    #print(train_src_insts)
     # read sequences profile
     train_seq_profile = load_picke_data(opt.train_sp)
     valid_seq_profile = load_picke_data(opt.valid_sp)

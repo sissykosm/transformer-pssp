@@ -18,19 +18,27 @@ def collate_fn_x(insts, sp_insts):
     ''' Pad the instance to the max seq length in batch '''
 
     max_len = max(len(inst) for inst in insts)
+    #print(max_len)
+    #max_len_sp = max(len(inst) for inst in [sp for sp in sp_insts])
+    #print(max_len_sp)
+
+    #print(insts)
+    #print(sp_insts)
 
     batch_seq = np.array([
         inst + [Constants.PAD] * (max_len - len(inst))
         for inst in insts])
     
     batch_sp = np.array([[
-        inst.tolist() + [Constants.PAD] * (max_len - len(inst))
+        inst.tolist() + [Constants.PAD] * (max_len- len(inst))
         for inst in sp]
         for sp in sp_insts])
     batch_pos = np.array([
         [pos_i+1 if w_i != Constants.PAD else 0
          for pos_i, w_i in enumerate(inst)] for inst in batch_seq])
 
+    #print(np.shape(batch_seq))
+    #print(np.shape(batch_sp))
     batch_seq = torch.LongTensor(batch_seq)
     batch_sp = torch.FloatTensor(batch_sp)
     batch_pos = torch.LongTensor(batch_pos)
